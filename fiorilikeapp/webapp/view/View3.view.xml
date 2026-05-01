@@ -1,0 +1,18 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+          xmlns:core="sap.ui.core"
+          xmlns:f="sap.ui.layout.form" controllerName="ats.mm.product.controller.View3">
+    <Page title="Supplier Details" showNavButton="true" navButtonPress="onBack">
+        <content>
+            <ObjectHeader title="{name}" intro="{person} {contactNo}" number="{city}" 
+                          numberUnit="{sinceWhen}" icon="sap-icon://supplier"></ObjectHeader>
+
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer ></ToolbarSpacer>
+                <Button text="Save" press="onSave" type="Accept"></Button>
+                <Button text="Cancel" press="onCancel" type="Reject"></Button>
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

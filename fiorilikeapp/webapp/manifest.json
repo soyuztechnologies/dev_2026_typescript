@@ -1,0 +1,99 @@
+{
+    "sap.app":{
+        "id": "ats.mm.product",
+        "type": "application",
+        "title" : "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "applicationVersion": {
+            "version": "1.0.0"
+        },
+        "i18n": "i18n/i18n.properties"        
+    },
+    "sap.ui":{
+        "technology": "UI5",
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "dependencies": {
+            "minUI5Version": "1.120.0",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.layout": {},
+                "sap.ui.core": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleUrl": "i18n/i18n.properties"
+                }
+            },
+            "": {
+                "type": "sap.ui.model.json.JSONModel",
+                "uri": "model/fruits.json"
+            }
+        },
+        "rootView":{
+            "id": "idRootView",
+            "viewName": "ats.mm.product.view.App",
+            "type": "XML"
+        },
+        "routing": {
+            "config":{
+                "routerClass": "sap.m.routing.Router",
+                "viewPath": "ats.mm.product.view",
+                "viewType": "XML",
+                "controlId": "appCon"
+            },
+            "routes":[
+                {
+                    "name": "leftSide",
+                    "pattern": "",
+                    "target": ["donald","trump"]
+                },
+                {
+                    "name": "spiderman",
+                    "pattern": "fruits/{fruitId}",
+                    "target": ["donald","modi"]
+                },
+                {
+                    "name": "superman",
+                    "pattern": "supplier/{supplierId}",
+                    "target": ["donald","putin"]
+                }
+            ],
+            "targets": {
+                "donald": {
+                    "id": "idView1",
+                    "viewName": "View1",
+                    "controlAggregation": "masterPages"
+                },
+                "trump": {
+                    "id": "idEmpty",
+                    "viewName": "Empty",
+                    "controlAggregation": "detailPages"
+                },
+                "modi": {
+                    "id": "idView2",
+                    "viewName": "View2",
+                    "controlAggregation": "detailPages"
+                },
+                "putin": {
+                    "id": "idView3",
+                    "viewName": "View3",
+                    "controlAggregation": "detailPages"
+                }
+            }
+        }
+    }
+}
+    

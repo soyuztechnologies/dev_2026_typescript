@@ -1,0 +1,17 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:f="sap.ui.layout.form">
+    <f:SimpleForm>
+        <f:content>
+            <Label text="Name"></Label>
+            <Text text="{name}"></Text>
+            <Label text="Taste"></Label>
+            <Text text="{taste}"></Text>
+            <Label text="Price"></Label>
+            <Text text="{price} {curr}"></Text>
+            <Label text="Availability"></Label>
+            <Text text="{path : 'availability',
+                            formatter: '.formatter.getStatus'}"></Text>
+            <Label text=""></Label>
+            <Button text="Lets Try 🚀" press="onTry"/> 
+        </f:content>
+    </f:SimpleForm>
+</core:FragmentDefinition>

@@ -1,0 +1,32 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+    controllerName="ats.mm.product.controller.View1"
+    xmlns:core="sap.ui.core">
+    <Page title="{i18n>view1Title}">
+        <content>
+            <SearchField id="idSearch" search="onSearch"></SearchField>
+            <List id="idList" items="{/fruits}" mode="SingleSelectMaster" delete="onDelete" selectionChange="onItemPress">
+                <items>
+                     <!-- To show a business object data create object list item -->
+                    <ObjectListItem title="{name}" intro="{healthBenefit}" icon="{image}"
+                                    number="{price}" numberUnit="{curr}"
+                    >
+                        <attributes>
+                            <ObjectAttribute title="Type" text="{taste}"></ObjectAttribute>
+                        </attributes>
+                        <firstStatus>
+                            <ObjectStatus text="{path: 'availability',
+                                                 formatter: '.formatter.getStatus'}"
+                                                 
+                                          state="{path: 'availability',
+                                                 formatter: '.formatter.getStatusColor'}"
+                                                 >             </ObjectStatus>
+                        </firstStatus>
+                    </ObjectListItem>
+                </items>
+            </List>
+        </content>
+        <headerContent>
+            <Button icon="sap-icon://action" press="onNext" />
+        </headerContent>
+    </Page>
+</mvc:View>

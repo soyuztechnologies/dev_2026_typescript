@@ -1,0 +1,35 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+          xmlns:core="sap.ui.core"
+          xmlns:f="sap.ui.layout.form" controllerName="ats.mm.product.controller.View2"
+          core:require="{
+                formatter: 'ats/mm/product/util/formatter'
+            }"
+          >
+    <Page title="View 2" showNavButton="true" navButtonPress="onBack">
+        <content>
+            <ObjectHeader title="{name}" intro="{healthBenefit}" number="{price}" 
+                          numberUnit="{curr}" icon="{image}"></ObjectHeader>
+
+            <IconTabBar >
+                <items>
+                    <IconTabFilter icon="sap-icon://warning" iconColor="Positive" text="Details">
+                        <core:Fragment fragmentName="ats.mm.product.fragments.moreInfo" type="XML" />
+                    </IconTabFilter>
+                    <IconTabFilter icon="sap-icon://supplier" iconColor="Marker" text="Suppliers">
+                        <core:Fragment fragmentName="ats.mm.product.fragments.supplier" type="XML" />
+                    </IconTabFilter>
+                    <IconTabFilter icon="sap-icon://home" iconColor="Negative" text="Cities">
+                        <core:Fragment fragmentName="ats.mm.product.fragments.cities" type="XML" />
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer ></ToolbarSpacer>
+                <Button text="Save" press="onSave" type="Accept"></Button>
+                <Button text="Cancel" press="onCancel" type="Reject"></Button>
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

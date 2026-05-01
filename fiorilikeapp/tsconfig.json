@@ -1,0 +1,204 @@
+{
+    /**
+     * tsconfig.json - TypeScript Compiler Configuration
+     * ===================================================
+     * This file controls how TypeScript compiles your .ts source files
+     * into JavaScript that SAP UI5 can run in the browser.
+     *
+     * SAP UI5 TypeScript Setup Overview:
+     * ------------------------------------
+     * 1. You write TypeScript (.ts) files with full type safety
+     * 2. TypeScript compiles them to JavaScript (.js) files
+     * 3. The ui5-tooling-transpile middleware (configured in ui5.yaml) handles
+     *    this compilation when you run "npx ui5 serve" or "npx ui5 build"
+     * 4. Type definitions come from: @openui5/ts-types-esm (in node_modules)
+     *
+     * To install all dependencies, run: npm install
+     * To start the dev server:          npm start   (runs "ui5 serve")
+     * To check TypeScript types only:   npm run ts-typecheck
+     */
+    "compilerOptions": {
+
+        /**
+         * target: "ES2022"
+         * -----------------
+         * Specifies the JavaScript version TypeScript compiles TO.
+         * "ES2022" supports: class fields, async/await, optional chaining (?.)
+         * nullish coalescing (??), private class members (#), and more.
+         *
+         * SAP UI5 1.120+ supports ES2022 syntax in browsers.
+         */
+        "target": "ES2022",
+
+        /**
+         * module: "ES2022"
+         * -----------------
+         * Specifies the MODULE SYSTEM used in the compiled output.
+         * "ES2022" = ECMAScript Modules (import/export syntax).
+         *
+         * The ui5-tooling-transpile build plugin converts these ES module
+         * statements into SAP UI5's AMD-compatible format (sap.ui.define).
+         *
+         * Alternative: "AMD" compiles directly to AMD format (define/require),
+         * but ES2022 with the UI5 toolchain is the modern recommended approach.
+         */
+        "module": "ES2022",
+
+        /**
+         * moduleResolution: "bundler"
+         * ----------------------------
+         * How TypeScript resolves import paths to actual files.
+         * "bundler" mode is optimized for tools like webpack, vite, and the UI5 toolchain.
+         * It correctly reads package.json "exports" field for subpath resolution.
+         *
+         * Alternative: "node16" or "nodenext" for strict ESM resolution.
+         */
+        "moduleResolution": "bundler",
+
+        /**
+         * skipLibCheck: true
+         * -------------------
+         * Skip type-checking of all .d.ts declaration files in node_modules.
+         * This speeds up compilation and avoids errors in third-party type files.
+         * Recommended setting for most SAP UI5 projects.
+         */
+        "skipLibCheck": true,
+
+        /**
+         * allowJs: true
+         * --------------
+         * Allow TypeScript to import and compile JavaScript (.js) files too.
+         * Useful during gradual migration from JavaScript to TypeScript.
+         * Once fully migrated to TypeScript, this can be set to false.
+         */
+        "allowJs": true,
+
+        /**
+         * strict: false
+         * --------------
+         * 'strict: true' enables ALL strict type-checking options in one flag.
+         * We set it to false here to allow gradual TypeScript adoption.
+         *
+         * We instead enable specific checks individually below:
+         * - noImplicitAny: true       (must specify types)
+         * - strictNullChecks: true    (null/undefined must be handled)
+         * - noImplicitOverride: true  (must use 'override' keyword)
+         *
+         * For production apps, set 'strict: true' for maximum type safety.
+         */
+        "strict": false,
+
+        /**
+         * noImplicitAny: true
+         * --------------------
+         * Variables and parameters MUST have explicit type annotations,
+         * or TypeScript must be able to infer the type from context.
+         *
+         * Without this: function fn(x) { }   ← x becomes 'any' silently
+         * With this:    function fn(x) { }   ← ERROR: x has implicit 'any'
+         * Fix:          function fn(x: string) { } ← explicit type required
+         */
+        "noImplicitAny": true,
+
+        /**
+         * noImplicitOverride: true
+         * -------------------------
+         * When overriding a parent class method, you MUST use the 'override' keyword.
+         * This prevents accidental method name collisions with the parent class.
+         *
+         * Without this: onInit() { }           ← allowed even if parent has onInit
+         * With this:    override onInit() { }  ← required if overriding parent method
+         *               onInit() { }           ← ERROR: missing 'override' keyword
+         */
+        "noImplicitOverride": true,
+
+        /**
+         * experimentalDecorators: true
+         * ------------------------------
+         * Enables TypeScript's decorator syntax (@decorator).
+         * SAP UI5 uses decorators in some advanced patterns (e.g., @event, @property).
+         * Required for future SAP UI5 TypeScript features.
+         */
+        "experimentalDecorators": true,
+
+        /**
+         * sourceMap: true
+         * ----------------
+         * Generates .js.map files alongside compiled .js files.
+         * Source maps allow browser DevTools to show the original TypeScript
+         * source code when debugging, instead of the compiled JavaScript.
+         *
+         * Without source maps: debug compiled JS → hard to read
+         * With source maps:    debug original TS → easy to understand
+         */
+        "sourceMap": true,
+
+        /**
+         * lib: ["ES2022", "DOM"]
+         * -----------------------
+         * Built-in TypeScript type definitions to include.
+         *
+         * "ES2022" → Types for JavaScript standard library (Array, Promise, Map, etc.)
+         * "DOM"    → Types for browser APIs (window, document, HTMLElement, etc.)
+         *
+         * Without "DOM", TypeScript wouldn't know about 'window.history.go(-1)'
+         * used in View3.controller.ts for browser history navigation.
+         */
+        "lib": ["ES2022", "DOM"],
+
+        /**
+         * paths: { ... }
+         * ---------------
+         * Module path ALIASES for TypeScript's type resolution.
+         * This maps import paths to where TypeScript finds the TYPE DEFINITIONS.
+         *
+         * At runtime (in the browser), SAP UI5's module loader handles the actual
+         * file loading. These paths only matter at compile/type-check time.
+         *
+         * Two alias groups:
+         *
+         * 1. "sap/*" → SAP UI5 type definitions (from @openui5/ts-types-esm package)
+         *    Example: import UIComponent from "sap/ui/core/UIComponent"
+         *             → TypeScript looks in: node_modules/@openui5/ts-types-esm/types/sap/ui/core/UIComponent.d.ts
+         *
+         * 2. "ats/mm/product/*" → Project's own source files (the app namespace)
+         *    Example: import BaseController from "ats/mm/product/controller/BaseController"
+         *             → TypeScript looks in: ./webapp/controller/BaseController.ts
+         *
+         * NOTE: This is only for TypeScript resolution. The ui5-tooling-transpile
+         * build tool handles actual module resolution using ui5.yaml configuration.
+         */
+        "types": ["@openui5/ts-types-esm"],
+
+        "paths": {
+            "ats/mm/product/*": ["./webapp/*"]
+        }
+    },
+
+    /**
+     * include: ["./webapp/**slash*"]
+     * ---------------------------
+     * Which files TypeScript should compile.
+     * "**" = any subdirectory (recursive)
+     * "*"  = any file name with any extension
+     *
+     * This includes all .ts, .tsx, .js files under the webapp/ folder.
+     */
+    "include": [
+        "./webapp/**/*"
+    ],
+
+    /**
+     * exclude: [...]
+     * ---------------
+     * Which files/directories TypeScript should IGNORE during compilation.
+     * - "node_modules": Third-party packages (already pre-compiled)
+     * - "dist":         Build output directory (would cause circular compilation)
+     * - "**slash*.d.ts":    Declaration files (type definitions, not source code)
+     */
+    "exclude": [
+        "node_modules",
+        "dist",
+        "**/*.d.ts"
+    ]
+}
