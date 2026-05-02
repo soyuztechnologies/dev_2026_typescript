@@ -1,0 +1,31 @@
+const cds = require('@sap/cds')
+require('dotenv').config()
+
+module.exports = class CatalogService extends cds.ApplicationService { init() {
+
+  const { BusinessPartnersSet, ContactsSet, SalesOrdersSet, SalesOrdersExtended } = cds.entities('CatalogService')
+
+  this.on ('READ', [BusinessPartnersSet, ContactsSet, SalesOrdersSet], async (req) => {
+    console.log('Custom handler for READ on BusinessPartnersSet, ContactsSet, SalesOrdersSet')
+    
+    const gatewaySampleService = await cds.connect.to('GWSAMPLE_BASIC', {
+      credentials: {
+        url: process.env.GATEWAY_URL,
+        username: process.env.GATEWAY_USERNAME,
+        password: process.env.GATEWAY_PASSWORD
+      }
+    });
+    const reply = await gatewaySampleService.run (req.query)
+    req.reply (reply)
+    
+  })
+
+
+  this.on ('READ', [SalesOrdersExtended], async (salesOrdersExtended, req) => {
+    console.log('Custom handler for READ on SalesOrdersExtended', salesOrdersExtended)
+    
+    
+  })
+
+  return super.init()
+}}

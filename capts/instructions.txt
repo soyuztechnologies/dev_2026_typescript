@@ -1,0 +1,13 @@
+> cds add typescript
+
+--dependencies added
+    "@cap-js/cds-types": "^0.15.0",
+    "@types/node": "^24.0.0",
+    "tsx": "^4",
+    "typescript": "^5",
+    "@cap-js/cds-typer": ">=0.1"
+
+
+
+
+

@@ -1,0 +1,41 @@
+{
+  "name": "capts",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "cds": {
+    "requires": {
+      "GWSAMPLE_BASIC": {
+        "kind": "odata-v2",
+        "model": "srv/external/GWSAMPLE_BASIC",
+        "credentials": {
+          "path": "/sap/opu/odata/sap/GWSAMPLE_BASIC"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@sap-cloud-sdk/connectivity": "^4",
+    "@sap-cloud-sdk/http-client": "^4",
+    "@sap-cloud-sdk/resilience": "^4",
+    "@sap/cds": "^9",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2",
+    "dotenv": "^17.4.2",
+    "@cap-js/cds-types": "^0.15.0",
+    "@types/node": "^24.0.0",
+    "tsx": "^4",
+    "typescript": "^5",
+    "@cap-js/cds-typer": ">=0.1"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "hybrid-js": "cds bind --exec cds run --profile hybrid",
+    "hybrid-ts": "cds bind --exec cds-ts run --profile hybrid"
+  },
+  "private": true,
+  "imports": {
+    "#cds-models/*": "./@cds-models/*/index.js"
+  }
+}
