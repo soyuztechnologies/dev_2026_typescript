@@ -1,5 +1,5 @@
 import cds from '@sap/cds'
-import { Booking, BookingSupplement as Supplements, Travel } from '#cds-models/TravelService'
+import { Booking, BookingSupplement as Supplements, Passenger, Travel } from '#cds-models/TravelService'
 import { TravelStatusCode } from '#cds-models/sap/fe/cap/travel'
 import { CdsDate } from '#cds-models/_'
 
@@ -18,6 +18,11 @@ export class TravelService extends cds.ApplicationService { init() {
     req.data.TravelID = ++maxID
   })
 
+  this.before ('CREATE', Passenger, async req => {
+    const { maxID } = await SELECT.one (`max(CustomerID) as maxID`) .from (Passenger) as { maxID: string }
+    req.data.CustomerID = String(parseInt(maxID || '0', 10) + 1).padStart(6, '0')
+  })
+
   this.before ('NEW', Booking.drafts, async req => {
     let { maxID } = await SELECT.one (`max(BookingID) as maxID`) .from (Booking.drafts) .where (req.data) as { maxID: number }
     req.data.BookingID = ++maxID
@@ -33,8 +38,8 @@ export class TravelService extends cds.ApplicationService { init() {
   // Ensure BeginDate is not before today and not after EndDate.
   this.before ('SAVE', Travel, req => {
     const { BeginDate, EndDate } = req.data
-    if (BeginDate < today()) req.error (400, `Begin Date must not be before today.`, 'in/BeginDate')
-    if (BeginDate > EndDate) req.error (400, `End Date must be after Begin Date.`, 'in/EndDate')
+    if (BeginDate && BeginDate < today()) req.error (400, `Begin Date must not be before today.`, 'in/BeginDate')
+    if (BeginDate && EndDate && BeginDate > EndDate) req.error (400, `End Date must be after Begin Date.`, 'in/EndDate')
   })
 
 
@@ -65,7 +70,7 @@ export class TravelService extends cds.ApplicationService { init() {
    * Trees-for-Tickets: helper to update totals including green flight fee
    */
   async function update_totalsGreen(TravelUUID: string) {
-    const { GoGreen } = await SELECT.one .from(Travel.drafts) .columns('GoGreen') .where({ TravelUUID })
+    const { GoGreen } = await SELECT.one .from(Travel.drafts) .columns('GoGreen') .where({ TravelUUID }) ?? {}
     if (GoGreen) {
       await UPDATE(Travel.drafts, TravelUUID)
         .set `GreenFee = round(BookingFee * 0.1, 0)`

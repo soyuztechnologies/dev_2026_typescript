@@ -2,6 +2,7 @@ using { sap.fe.cap.travel as my } from '../db/schema';
 
 service TravelService @(path:'/processor') {
 
+  @odata.draft.enabled
   @(restrict: [
     { grant: 'READ', to: 'authenticated-user'},
     { grant: ['rejectTravel','acceptTravel','deductDiscount'], to: 'reviewer'},

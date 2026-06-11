@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "outDir": "./gen/srv",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "paths": {
+      "#cds-models/*": ["./@cds-models/*/index.ts"]
+    }
+  },
+  "include": [
+    "srv/**/*",
+    "@cds-models/**/*"
+  ]
+}

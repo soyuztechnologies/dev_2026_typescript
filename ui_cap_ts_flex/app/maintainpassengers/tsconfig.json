@@ -17,9 +17,15 @@
     },
     "typeRoots": [
       "./node_modules/@types",
-      "./node_modules/@sapui5/types",
+      "./node_modules/@sapui5",
       "../../node_modules/@types",
-      "../../node_modules/@sapui5/types"
+      "../../node_modules/@sapui5"
+    ],
+    "types": [
+      "ts-types-esm",
+      "jquery",
+      "qunit",
+      "offscreencanvas"
     ]
   },
   "include": [

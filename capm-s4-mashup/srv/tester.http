@@ -1,0 +1,29 @@
+@host = http://localhost:4004
+
+### 1) GET — read sales orders from S/4HANA via the mashup
+GET {{host}}/odata/v4/catalog/getSalesOrders()
+Accept: application/json
+
+### 2) POST — create a sales order through the mashup action
+POST {{host}}/odata/v4/catalog/createSalesOrder
+Content-Type: application/json
+
+{
+  "order": {
+    "salesOrderType": "TA",
+    "salesOrganization": "BMGB",
+    "distributionChannel": "DB",
+    "organizationDivision": "AC",
+    "salesDistrict": "000001",
+    "soldToParty": "49",
+    "salesOrderDate": "2026-04-06",
+    "items": [
+      {
+        "salesOrderItem": "10",
+        "material": "220",
+        "requestedQuantity": "5",
+        "requestedQuantityUnit": "PCE"
+      }
+    ]
+  }
+}

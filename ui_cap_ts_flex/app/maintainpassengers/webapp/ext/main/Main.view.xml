@@ -1,6 +1,67 @@
 <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:macros="sap.fe.macros"
     xmlns:html="http://www.w3.org/1999/xhtml" controllerName="anubhav.ui.maintainpassengers.ext.main.Main">
     <Page id="Main" title="{i18n>MainTitle}">
-        <content></content>
+        <headerContent>
+            <Button 
+                    id="createButton" 
+                    text="Create a New Passenger" 
+                    press="onCreatePress"
+                    type="Emphasized"
+                    icon="sap-icon://add"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginBottom" />
+                
+                <ToolbarSpacer id="spacer" />
+                 
+                <Button 
+                    id="refreshButton"
+                    text="Refresh"
+                    press="onRefresh"
+                    icon="sap-icon://refresh" />
+        </headerContent>
+        <content>
+            <!-- Toolbar with Button -->
+            <!-- <VBox class="sapUiLargeMarginTop"></VBox>
+            <Toolbar id="newToolbar" class="sapUiLargeMarginBegin sapUiLargeMarginEnd">
+                
+            </Toolbar> -->
+
+            <!-- Panel with Table -->
+            <Panel 
+            id="mainPanel"
+            expandable="true"
+            expanded="false"
+            headerText="Existing Passengers"
+            width="95%"
+            class="sapUiSmallMarginBegin">
+            
+            <!-- Filters -->
+            <VBox class="sapUiSmallMargin" id="boxe">
+                <HBox id="hboxes" class="sapUiSmallMarginBottom">
+                <SearchField 
+                    id="searchField"
+                    search="onSearch"
+                    width="300px"
+                    placeholder="Search passengers..." />
+                </HBox>
+            </VBox>
+            
+            <macros:FilterBar 
+                metaPath="@com.sap.vocabularies.UI.v1.SelectionFields"
+                id="filterBar"
+                liveMode="true"
+            />
+            
+            <!-- Data Table -->
+            <macros:Table 
+                metaPath="@com.sap.vocabularies.UI.v1.LineItem" filterBar="filterBar"
+                readOnly="true" 
+                id="table"
+                selectionMode="MultiToggle" />
+                
+            </Panel>
+
+
+            
+        </content>
     </Page>
 </mvc:View>

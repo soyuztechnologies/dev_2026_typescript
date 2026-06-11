@@ -1,0 +1,46 @@
+{
+  "name": "capm-s4-mashup",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "dependencies": {
+    "@sap-cloud-sdk/odata-v4": "^4.7.0",
+    "@sap/cds": "^9",
+    "dotenv": "^17.4.2",
+    "express": "^4",
+    "@sap-cloud-sdk/connectivity": "^4",
+    "@sap-cloud-sdk/http-client": "^4",
+    "@sap-cloud-sdk/resilience": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/cds-typer": ">=0.1",
+    "@cap-js/cds-types": "^0.15.0",
+    "@cap-js/sqlite": "^2",
+    "@sap-cloud-sdk/generator": "^4.7.0",
+    "@types/node": "^24.13.2",
+    "ts-node": "^10.9.2",
+    "tsx": "^4",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch": "cds watch",
+    "build:ts": "tsc",
+    "build": "cds build --production && tsc",
+    "test": "npx jest"
+  },
+  "private": true,
+  "imports": {
+    "#cds-models/*": "./@cds-models/*/index.js"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "sql"
+      },
+      "sap_s4_OP_SALESORDER_0001_v1": {
+        "kind": "odata",
+        "model": "srv/external/sap-s4-OP_SALESORDER_0001-v1"
+      }
+    }
+  }
+}

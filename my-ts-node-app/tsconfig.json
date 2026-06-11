@@ -10,6 +10,10 @@
     "module": "nodenext",
     "target": "esnext",
     "types": [],
+    "typeRoots": [
+      "./src/types",           // ✅ tells TS where your custom .d.ts files live
+      "./node_modules/@types"  // ✅ keeps node_modules types working
+    ],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -17,28 +21,131 @@
 
     // Other Outputs
     "sourceMap": true,
+    // Generates .map files alongside .js — maps compiled JS back to original TS
+    // Enables breakpoints in original .ts files during debugging
+
     "declaration": true,
+    // Generates .d.ts type definition files from your .ts source
+    // Required when publishing npm packages so consumers get type hints & intellisense
+
     "declarationMap": true,
+    // Generates .d.ts.map files — maps .d.ts back to original .ts source
+    // "Go to Definition" in IDE jumps to your .ts file instead of generated .d.ts
+    // Requires "declaration": true
 
-    // Stricter Typechecking Options
+    // -------------------------------------------------------------------
+    // STRICTER TYPE-CHECKING OPTIONS
+    // -------------------------------------------------------------------
+
     "noUncheckedIndexedAccess": true,
+    // Array index or Record key access returns T | undefined (not just T)
+    // const first = arr[0]          → type is string | undefined (not string)
+    // const val   = obj['key']      → type is number | undefined (not number)
+    // Caused your req.params.id error — fix: req.params['id'] ?? ''
+
     "exactOptionalPropertyTypes": true,
+    // Optional props (?) must be ABSENT or declared type — not explicitly undefined
+    // interface User { bio?: string }
+    // { bio: undefined } → ❌ ERROR   (absent means missing, not undefined)
+    // { bio: 'hello'   } → ✅ OK
+    // { }                → ✅ OK
 
-    // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
+    // -------------------------------------------------------------------
+    // STYLE OPTIONS
+    // -------------------------------------------------------------------
 
-    // Recommended Options
+    "noImplicitReturns": true,
+    // All code paths in a non-void function must explicitly return a value
+    // function fn(): number { if(x) return 1; } → ❌ missing return on else path
+
+    "noImplicitOverride": true,
+    // Child class methods overriding parent MUST use the 'override' keyword
+    // class Dog extends Animal { speak() {} }          → ❌ ERROR
+    // class Dog extends Animal { override speak() {} } → ✅ OK
+
+    "noUnusedLocals": true,
+    // Variables declared but never read are an error
+    // const unused = 'hello';  → ❌ ERROR: 'unused' is declared but never read
+
+    "noUnusedParameters": true,
+    // Function parameters declared but never used are an error
+    // function fn(a: string, b: number) { return a; } → ❌ ERROR: 'b' unused
+    // Prefix with _ to suppress: function fn(a: string, _b: number) {}  → ✅ OK
+
+    "noFallthroughCasesInSwitch": true,
+    // switch-case blocks must end with break / return / throw
+    // case 'a': doSomething();          → ❌ ERROR: falls through to next case
+    // case 'a': doSomething(); break;   → ✅ OK
+
+    "noPropertyAccessFromIndexSignature": false,
+    // Properties from index signatures must use bracket notation, not dot notation
+    // interface Obj { [key: string]: number }
+    // obj.foo   → ❌ ERROR  (foo comes from index signature)
+    // obj['foo'] → ✅ OK
+
+    // -------------------------------------------------------------------
+    // RECOMMENDED OPTIONS
+    // -------------------------------------------------------------------
+
     "strict": true,
+    // Master switch — enables ALL strict checks below in one line:
+    //   strictNullChecks            → null/undefined not assignable to other types
+    //   strictFunctionTypes         → stricter checking for function parameter types
+    //   strictPropertyInitialization→ class props must be initialized in constructor
+    //   noImplicitAny               → variables must have explicit types, no silent any
+    //   noImplicitThis              → 'this' must have explicit type annotation
+    //   alwaysStrict                → emits "use strict" in every compiled JS file
+    //   strictBindCallApply         → checks args of .bind() .call() .apply()
+    //   useUnknownInCatchVariables  → catch(e) types e as unknown, not any
+
     "jsx": "react-jsx",
+    // Controls how JSX syntax is compiled
+    // "react-jsx"     → uses React 17+ automatic runtime (no need to import React)
+    // "react"         → classic runtime (must import React in every .tsx file)
+    // "preserve"      → leaves JSX as-is for another tool (e.g. Babel) to handle
+
     "verbatimModuleSyntax": false,
+    // When true  → import type must be used for type-only imports, enforced strictly
+    // When false → TypeScript handles import elision automatically
+    // import type { User } from './types' → required when true, optional when false
+
     "isolatedModules": true,
+    // Each file must be a valid standalone module (must have at least one import/export)
+    // Required by transpilers like Babel/esbuild that process files one at a time
+    // const enum and namespace are disallowed (they require cross-file knowledge)
+    // export {}  → add this to any file with no imports to satisfy the rule
+
     "noUncheckedSideEffectImports": true,
+    // Side-effect-only imports must resolve to a real file — unresolved ones are errors
+    // import './styles.css'   → ❌ ERROR if .css has no type declaration
+    // import './setup'        → ✅ OK if setup.ts exists and resolves
+
     "moduleDetection": "force",
+    // "force"  → treats every file as a module regardless of imports/exports
+    // "auto"   → only treats files with import/export as modules (default)
+    // "legacy" → old behavior — files without imports are global scripts
+    // Use "force" to avoid accidental global script files in modern projects
+
     "skipLibCheck": true,
+    // Skips type checking of all .d.ts declaration files (node_modules included)
+    // Speeds up compilation significantly in large projects
+    // Avoids errors from outdated or conflicting third-party type definitions
+    // Trade-off: type errors inside libraries won't be caught — acceptable in most cases
+
+
+    ///Strict checks at design time checks
+    "strictNullChecks": true, // null/undefined are not assignable to other types
+    "strictFunctionTypes": true,      // Stricter checking for function types
+    "strictPropertyInitialization": true, // Class props must be initialized
+    "noImplicitAny": true,    // Variables must have explicit types, no silent 'any'
+    "noImplicitThis": true,   // 'this' must be typed explicitly
+    "alwaysStrict": true,     // Emits "use strict" in every JS output file
+    "strictBindCallApply": true,       // Checks .bind(), .call(), .apply() args
+    
+    //decorators
+    "experimentalDecorators": true,  // enables @Decorator syntax
+    "emitDecoratorMetadata": true,   // emits type metadata at runtime
+                                     // required for reflect-metadata to work
+
   }
 }

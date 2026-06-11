@@ -1,4 +1,5 @@
 import Controller from "sap/fe/core/PageController";
+import Table from "sap/fe/macros/Table";
 
 /**
  * @namespace anubhav.ui.maintainpassengers.ext.main
@@ -31,7 +32,13 @@ export default class Main extends Controller {
     // public  onAfterRendering(): void {
     //
     //  }
-
+    public onCreatePress(): void {
+        this.getExtensionAPI().getEditFlow().createDocument("/Passenger",{
+            creationMode: "NewPage"
+        });
+        const oTable = this.byId("table") as Table;
+        oTable.refresh();
+    }
     /**
      * Called when the Controller is destroyed. Use this one to free resources and finalize activities.
      * @memberOf anubhav.ui.maintainpassengers.ext.main.Main
