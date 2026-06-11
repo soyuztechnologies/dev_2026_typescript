@@ -42,5 +42,8 @@
         "model": "srv/external/sap-s4-OP_SALESORDER_0001-v1"
       }
     }
-  }
+  },
+  "sapux": [
+    "app/manageorder"
+  ]
 }
