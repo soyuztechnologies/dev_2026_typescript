@@ -16,11 +16,19 @@ export interface SalesOrderInput {
   items: SalesOrderItemInput[];
 }
 
+export interface SalesOrderItemView {
+  salesOrderItem: string;
+  material: string;
+  requestedQuantity: string;
+  requestedQuantityUnit: string;
+}
+
 export interface SalesOrderView {
   salesOrder: string;
   salesOrderType: string;
   soldToParty: string;
   salesOrganization: string;
+  items: SalesOrderItemView[];
 }
 
 export type ODataVersion = 'v2' | 'v4';

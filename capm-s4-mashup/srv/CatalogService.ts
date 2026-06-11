@@ -49,9 +49,12 @@ export class CatalogService extends cds.ApplicationService {
 
   private getSalesOrders = async (): Promise<SalesOrderView[]> => {
     const cfg = loadS4Config();
-    const orders = await salesOrderService()
-      .salesOrderApi.requestBuilder()
+    const service = salesOrderService();
+    const orders = await service.salesOrderApi
+      .requestBuilder()
       .getAll()
+      // expand the item lines so the detail view can show them in a table
+      .expand(service.salesOrderApi.schema.ITEM)
       .top(20)
       .execute({ url: cfg.url, username: cfg.username, password: cfg.password });
 
@@ -60,6 +63,13 @@ export class CatalogService extends cds.ApplicationService {
       salesOrderType: o.salesOrderType ?? '',
       soldToParty: o.soldToParty ?? '',
       salesOrganization: o.salesOrganization ?? '',
+      items: (o.item ?? []).map((it) => ({
+        salesOrderItem: it.salesOrderItem ?? '',
+        material: it.product ?? '',
+        // requestedQuantity is an Edm.Decimal (BigNumber) - send it as a string
+        requestedQuantity: it.requestedQuantity?.toString() ?? '',
+        requestedQuantityUnit: it.requestedQuantitySapUnit ?? it.requestedQuantityIsoUnit ?? '',
+      })),
     }));
   };
 
@@ -108,6 +118,13 @@ export class CatalogService extends cds.ApplicationService {
         salesOrderType: created.salesOrderType ?? '',
         soldToParty: created.soldToParty ?? '',
         salesOrganization: created.salesOrganization ?? '',
+        // S/4 does not echo the created items on this response, so return what we sent
+        items: input.items.map((it) => ({
+          salesOrderItem: it.salesOrderItem ?? '',
+          material: it.material ?? '',
+          requestedQuantity: it.requestedQuantity ?? '',
+          requestedQuantityUnit: it.requestedQuantityUnit ?? '',
+        })),
       };
     } catch (err: any) {
       // Surface the real S/4 response instead of a generic 500.

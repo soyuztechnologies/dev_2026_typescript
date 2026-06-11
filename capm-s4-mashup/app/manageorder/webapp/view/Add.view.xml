@@ -1,0 +1,62 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+          xmlns:core="sap.ui.core"
+          xmlns:f="sap.ui.layout.form" controllerName="com.ats.manageorder.controller.Add">
+    <Page title="Create Sales Order" showNavButton="true" navButtonPress="onCancel">
+        <content>
+            <!-- order header fields - same fields we POST in srv/tester.http -->
+            <f:SimpleForm title="Order Header" editable="true" layout="ResponsiveGridLayout">
+                <f:content>
+                    <Label text="Order Type" />
+                    <Input value="{newOrder>/salesOrderType}" />
+                    <Label text="Sales Organization" />
+                    <Input value="{newOrder>/salesOrganization}" />
+                    <Label text="Distribution Channel" />
+                    <Input value="{newOrder>/distributionChannel}" />
+                    <Label text="Division" />
+                    <Input value="{newOrder>/organizationDivision}" />
+                    <Label text="Sales District" />
+                    <Input value="{newOrder>/salesDistrict}" />
+                    <Label text="Sold-To Party" />
+                    <Input value="{newOrder>/soldToParty}" />
+                    <Label text="Sales Order Date" />
+                    <DatePicker value="{newOrder>/salesOrderDate}" valueFormat="yyyy-MM-dd" displayFormat="yyyy-MM-dd" />
+                </f:content>
+            </f:SimpleForm>
+
+            <!-- item rows for the new order -->
+            <Table id="idNewItems" items="{newOrder>/items}" mode="SingleSelectMaster">
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Order Items" />
+                        <ToolbarSpacer />
+                        <Button icon="sap-icon://add" text="Add Item" press="onAddItem" />
+                        <Button icon="sap-icon://delete" text="Delete Item" press="onDeleteItem" />
+                    </Toolbar>
+                </headerToolbar>
+                <columns>
+                    <Column><Text text="Item" /></Column>
+                    <Column><Text text="Material" /></Column>
+                    <Column><Text text="Quantity" /></Column>
+                    <Column><Text text="Unit" /></Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Input value="{newOrder>salesOrderItem}" />
+                            <Input value="{newOrder>material}" />
+                            <Input value="{newOrder>requestedQuantity}" />
+                            <Input value="{newOrder>requestedQuantityUnit}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer></ToolbarSpacer>
+                <Button text="Save" press="onSave" type="Accept"></Button>
+                <Button text="Cancel" press="onCancel" type="Reject"></Button>
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

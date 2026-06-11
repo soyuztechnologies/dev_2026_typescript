@@ -43,7 +43,6 @@
     }
   },
   "sap.ui5": {
-    "flexEnabled": true,
     "dependencies": {
       "minUI5Version": "1.149.0",
       "libs": {
@@ -114,11 +113,67 @@
         }
       }
     },
-    "rootView": {
-      "viewName": "com.ats.manageorder.view.App",
-      "type": "XML",
-      "async": true,
-      "id": "App"
-    }
+    "rootView":{
+            "id": "idRootView",
+            "viewName": "com.ats.manageorder.view.App",
+            "type": "XML"
+        },
+        "routing": {
+            "config":{
+                "routerClass": "sap.m.routing.Router",
+                "viewPath": "com.ats.manageorder.view",
+                "viewType": "XML",
+                "controlId": "appCon"
+            },
+            "routes":[
+                {
+                    "name": "leftSide",
+                    "pattern": "",
+                    "target": ["donald","trump"]
+                },
+                {
+                    "name": "spiderman",
+                    "pattern": "order/{orderId}",
+                    "target": ["donald","modi"]
+                },
+                {
+                    "name": "addOrder",
+                    "pattern": "add",
+                    "target": ["donald","ironman"]
+                },
+                {
+                    "name": "superman",
+                    "pattern": "supplier/{supplierId}",
+                    "target": ["donald","putin"]
+                }
+            ],
+            "targets": {
+                "donald": {
+                    "id": "idView1",
+                    "viewName": "View1",
+                    "controlAggregation": "masterPages"
+                },
+                "trump": {
+                    "id": "idEmpty",
+                    "viewName": "Empty",
+                    "controlAggregation": "detailPages"
+                },
+                "modi": {
+                    "id": "idView2",
+                    "viewName": "View2",
+                    "controlAggregation": "detailPages"
+                },
+                "putin": {
+                    "id": "idView3",
+                    "viewName": "View3",
+                    "controlAggregation": "detailPages"
+                },
+                "ironman": {
+                    "id": "idAdd",
+                    "viewName": "Add",
+                    "controlAggregation": "detailPages"
+                }
+            }
+        }
   }
 }

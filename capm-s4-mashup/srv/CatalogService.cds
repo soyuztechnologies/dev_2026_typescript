@@ -16,6 +16,14 @@ service CatalogService {
     salesOrderType     : String;
     soldToParty        : String;
     salesOrganization  : String;
+    items              : array of SalesOrderItemView;
+  }
+
+  type SalesOrderItemView {
+    salesOrderItem        : String;
+    material              : String;
+    requestedQuantity     : String;
+    requestedQuantityUnit : String;
   }
 
   type SalesOrderItemInput {

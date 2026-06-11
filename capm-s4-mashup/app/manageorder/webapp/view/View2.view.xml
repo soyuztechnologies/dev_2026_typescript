@@ -1,0 +1,38 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+          xmlns:core="sap.ui.core"
+          xmlns:f="sap.ui.layout.form" controllerName="com.ats.manageorder.controller.View2">
+    <Page title="Sales Order Details" showNavButton="true" navButtonPress="onBack">
+        <content>
+            <!-- order header data of the selected order -->
+            <ObjectHeader title="{orders>salesOrder}"
+                          intro="{path: 'orders>salesOrderType',
+                                  formatter: '.formatter.getOrderTypeDescription'}">
+                <attributes>
+                    <ObjectAttribute title="Sold-To Party" text="{orders>soldToParty}"></ObjectAttribute>
+                    <ObjectAttribute title="Sales Organization" text="{orders>salesOrganization}"></ObjectAttribute>
+                    <ObjectAttribute title="Order Type" text="{orders>salesOrderType}"></ObjectAttribute>
+                </attributes>
+            </ObjectHeader>
+
+            <!-- item data of the selected order shown in a table -->
+            <Table id="idItemsTable" items="{orders>items}" headerText="Order Items">
+                <columns>
+                    <Column><Text text="Item" /></Column>
+                    <Column><Text text="Material" /></Column>
+                    <Column><Text text="Quantity" /></Column>
+                    <Column><Text text="Unit" /></Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{orders>salesOrderItem}" />
+                            <Text text="{orders>material}" />
+                            <Text text="{orders>requestedQuantity}" />
+                            <Text text="{orders>requestedQuantityUnit}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>

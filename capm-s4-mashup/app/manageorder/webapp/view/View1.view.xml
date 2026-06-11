@@ -1,0 +1,27 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="com.ats.manageorder.controller.View1">
+    <Page title="{i18n>view1Title}">
+        <content>
+            <SearchField id="idSearch" search="onSearch"></SearchField>
+            <List id="idList" items="{orders>/}" mode="SingleSelectMaster" selectionChange="onItemPress"
+                  growing="true" growingThreshold="10" growingScrollToLoad="true"
+                  growingTriggerText="Load more orders">
+                <items>
+                     <!-- To show a business object data create object list item -->
+                    <ObjectListItem title="{orders>salesOrder}" intro="Sales Order"
+                                    number="{orders>soldToParty}" numberUnit="Sold-To"
+                    >
+                        <attributes>
+                            <ObjectAttribute title="Order Type"
+                                             text="{path: 'orders>salesOrderType',
+                                                    formatter: '.formatter.getOrderTypeDescription'}"></ObjectAttribute>
+                            <ObjectAttribute title="Sales Org" text="{orders>salesOrganization}"></ObjectAttribute>
+                        </attributes>
+                    </ObjectListItem>
+                </items>
+            </List>
+        </content>
+        <headerContent>
+            <Button icon="sap-icon://add" tooltip="Create Sales Order" press="onAdd" />
+        </headerContent>
+    </Page>
+</mvc:View>

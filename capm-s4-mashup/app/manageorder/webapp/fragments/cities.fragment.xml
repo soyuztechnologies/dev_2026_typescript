@@ -1,0 +1,20 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:f="sap.ui.layout.form">
+    <!-- Select - allows one item selection, first item is already selected, doesnt allow custom -->
+                        <Select items="{/cities}">
+                            <items>
+                                <core:Item key="{name}" text="{name}" />
+                            </items>
+                        </Select>
+                        <!-- ComboBox - allows us to type custom data  Input + Dropdown -->
+                        <ComboBox items="{/cities}">
+                            <items>
+                                <core:Item key="{name}" text="{name}" />
+                            </items>
+                        </ComboBox>
+                        <!-- MultiComboBox - allows us to type custom data  Input + Dropdown -->
+                        <MultiComboBox items="{/cities}">
+                            <items>
+                                <core:Item key="{name}" text="{name}" />
+                            </items>
+                        </MultiComboBox>
+</core:FragmentDefinition>
