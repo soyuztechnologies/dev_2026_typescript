@@ -8,7 +8,7 @@ import Router from "sap/ui/core/routing/Router";
 import History from "sap/ui/core/routing/History";
 import * as formatter from "../util/formatter";
 /**
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  */
 export default abstract class BaseController extends Controller {
 	/**

@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('manifest.json','utf8'\\)\\); console.log\\('manifest.json: valid JSON'\\);\")",
+      "Bash(node -e \"let p=require\\('./package.json'\\); console.log\\('scripts:', JSON.stringify\\(p.scripts||{}, null, 2\\)\\)\")",
+      "Bash(echo \"EXIT: $?\")"
     ]
   }
 }

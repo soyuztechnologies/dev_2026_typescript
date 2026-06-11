@@ -1,6 +1,6 @@
 /**
  * @file View3.controller.ts
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  *
  * SAP UI5 View3 Controller (Supplier Detail View) - TypeScript Version
  * =====================================================================
@@ -31,7 +31,7 @@
  *   View2 (or browser history back)
  */
 
-import BaseController from "ats/mm/product/controller/BaseController";
+import BaseController from "com/ats/manageorder/controller/BaseController";
 import UIComponent from "sap/ui/core/UIComponent";
 
 /**
@@ -81,7 +81,7 @@ interface ISupplierRouteArguments {
 }
 
 /**
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  */
 
 /**

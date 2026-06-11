@@ -3,7 +3,7 @@ import models from "./model/models";
 import Device from "sap/ui/Device";
 
 /**
- * @namespace ats.mm.product
+ * @namespace com.ats.manageorder
  */
 export default class Component extends UIComponent {
 	public static metadata = {

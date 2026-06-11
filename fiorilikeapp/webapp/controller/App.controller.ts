@@ -1,6 +1,6 @@
 /**
  * @file App.controller.ts
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  *
  * SAP UI5 App Controller - TypeScript Version
  * ============================================
@@ -28,14 +28,14 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * JAVASCRIPT (old):
- *   sap.ui.define(["ats/mm/product/controller/BaseController"],
+ *   sap.ui.define(["com/ats/manageorder/controller/BaseController"],
  *     function(BaseController) {
- *       return BaseController.extend("ats.mm.product.controller.App", {});
+ *       return BaseController.extend("com.ats.manageorder.controller.App", {});
  *     }
  *   );
  *
  * TYPESCRIPT (new):
- *   import BaseController from "ats/mm/product/controller/BaseController";
+ *   import BaseController from "com/ats/manageorder/controller/BaseController";
  *   export default class App extends BaseController {}
  *
  * NOTE: Even an empty TypeScript class with 'extends' inherits everything:
@@ -47,13 +47,13 @@
 
 /**
  * Import BaseController - our project's common base class.
- * TypeScript resolves: "ats/mm/product/controller/BaseController"
+ * TypeScript resolves: "com/ats/manageorder/controller/BaseController"
  *   → ./webapp/controller/BaseController.ts (via tsconfig.json paths)
  */
-import BaseController from "ats/mm/product/controller/BaseController";
+import BaseController from "com/ats/manageorder/controller/BaseController";
 
 /**
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  *
  * Required annotation for SAP UI5 TypeScript class registry.
  */
@@ -69,9 +69,9 @@ import BaseController from "ats/mm/product/controller/BaseController";
  *
  * SAP UI5 manifest.json links this class to App.view.xml:
  *   "rootView": {
- *     "viewName": "ats.mm.product.view.App",
+ *     "viewName": "com.ats.manageorder.view.App",
  *     "type": "XML",
- *     "controllerName": "ats.mm.product.controller.App"
+ *     "controllerName": "com.ats.manageorder.controller.App"
  *   }
  *
  * TYPESCRIPT FACT: Even without declaring any members,

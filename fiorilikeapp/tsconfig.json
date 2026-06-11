@@ -161,8 +161,8 @@
          *    Example: import UIComponent from "sap/ui/core/UIComponent"
          *             → TypeScript looks in: node_modules/@openui5/ts-types-esm/types/sap/ui/core/UIComponent.d.ts
          *
-         * 2. "ats/mm/product/*" → Project's own source files (the app namespace)
-         *    Example: import BaseController from "ats/mm/product/controller/BaseController"
+         * 2. "com/ats/manageorder/*" → Project's own source files (the app namespace)
+         *    Example: import BaseController from "com/ats/manageorder/controller/BaseController"
          *             → TypeScript looks in: ./webapp/controller/BaseController.ts
          *
          * NOTE: This is only for TypeScript resolution. The ui5-tooling-transpile
@@ -171,7 +171,7 @@
         "types": ["@openui5/ts-types-esm"],
 
         "paths": {
-            "ats/mm/product/*": ["./webapp/*"]
+            "com/ats/manageorder/*": ["./webapp/*"]
         }
     },
 

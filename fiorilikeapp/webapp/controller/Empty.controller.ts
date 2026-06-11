@@ -1,6 +1,6 @@
 /**
  * @file Empty.controller.ts
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  *
  * SAP UI5 Empty Controller - TypeScript Version
  * ==============================================
@@ -34,16 +34,16 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * JAVASCRIPT (old):
- *   sap.ui.define(["ats/mm/product/controller/BaseController"],
+ *   sap.ui.define(["com/ats/manageorder/controller/BaseController"],
  *     function(BaseController) {
- *       return BaseController.extend("ats.mm.product.controller.Empty", {});
+ *       return BaseController.extend("com.ats.manageorder.controller.Empty", {});
  *     }
  *   );
  */
-import BaseController from "ats/mm/product/controller/BaseController";
+import BaseController from "com/ats/manageorder/controller/BaseController";
 
 /**
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  */
 
 /**

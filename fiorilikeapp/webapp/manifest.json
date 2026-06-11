@@ -1,6 +1,6 @@
 {
     "sap.app":{
-        "id": "ats.mm.product",
+        "id": "com.ats.manageorder",
         "type": "application",
         "title" : "{{appTitle}}",
         "description": "{{appDescription}}",
@@ -44,13 +44,13 @@
         },
         "rootView":{
             "id": "idRootView",
-            "viewName": "ats.mm.product.view.App",
+            "viewName": "com.ats.manageorder.view.App",
             "type": "XML"
         },
         "routing": {
             "config":{
                 "routerClass": "sap.m.routing.Router",
-                "viewPath": "ats.mm.product.view",
+                "viewPath": "com.ats.manageorder.view",
                 "viewType": "XML",
                 "controlId": "appCon"
             },

@@ -1,6 +1,6 @@
 /**
  * @file View2.controller.ts
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  *
  * SAP UI5 View2 Controller (Fruit Detail View) - TypeScript Version
  * ==================================================================
@@ -28,7 +28,7 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import BaseController from "ats/mm/product/controller/BaseController";
+import BaseController from "com/ats/manageorder/controller/BaseController";
 import UIComponent from "sap/ui/core/UIComponent";
 import MessageBox from "sap/m/MessageBox";
 import MessageToast from "sap/m/MessageToast";
@@ -118,7 +118,7 @@ interface IFruitRouteArguments {
 /**
  * View2 Controller - Detail View (Fruit Details + Supplier List)
  * ─────────────────────────────────────────────────────────────────────────────
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  */
 export default class View2 extends BaseController {
 
@@ -286,7 +286,7 @@ export default class View2 extends BaseController {
              *
              * Configuration:
              *   - id: 'supplier'                            → fragment instance ID prefix
-             *   - name: 'ats.mm.product.fragments.popup'    → maps to popup.fragment.xml
+             *   - name: 'com.ats.manageorder.fragments.popup'    → maps to popup.fragment.xml
              *   - type: 'XML'                               → fragment type (always XML)
              *   - controller: this                          → event handler context
              *
@@ -300,7 +300,7 @@ export default class View2 extends BaseController {
              */
             Fragment.load({
                 id: "supplier",
-                name: "ats.mm.product.fragments.popup",
+                name: "com.ats.manageorder.fragments.popup",
                 type: "XML",
                 controller: this
             })
@@ -433,7 +433,7 @@ export default class View2 extends BaseController {
         if (!this.oCityPopup) {
             Fragment.load({
                 id:         "cities",
-                name:       "ats.mm.product.fragments.popup",
+                name:       "com.ats.manageorder.fragments.popup",
                 type:       "XML",
                 controller: this
             })
@@ -442,7 +442,7 @@ export default class View2 extends BaseController {
                  * REUSING popup.fragment.xml FOR BOTH CITY AND SUPPLIER DIALOGS:
                  * ─────────────────────────────────────────────────────────────────────
                  * Note that both onFilter() and onF4Help() load the SAME fragment XML file
-                 * ('ats.mm.product.fragments.popup') but with DIFFERENT fragment IDs
+                 * ('com.ats.manageorder.fragments.popup') but with DIFFERENT fragment IDs
                  * ('supplier' and 'cities').
                  *
                  * SAP UI5 Fragment.load() uses the 'id' parameter to create unique control IDs,

@@ -1,6 +1,6 @@
 /**
  * @file View1.controller.ts
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  *
  * SAP UI5 View1 Controller (Fruit List / Master View) - TypeScript Version
  * =========================================================================
@@ -36,7 +36,7 @@
  * The build tool (ui5-tooling-transpile) converts these to:
  *   sap.ui.define([...paths...], function(...classes...) { ... });
  */
-import BaseController from "ats/mm/product/controller/BaseController";
+import BaseController from "com/ats/manageorder/controller/BaseController";
 import UIComponent from "sap/ui/core/UIComponent";
 
 /**
@@ -110,7 +110,7 @@ import StandardListItem from "sap/m/StandardListItem";
 import ListBinding from "sap/ui/model/ListBinding";
 
 /**
- * @namespace ats.mm.product.controller
+ * @namespace com.ats.manageorder.controller
  */
 
 /**
@@ -118,7 +118,7 @@ import ListBinding from "sap/ui/model/ListBinding";
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * JAVASCRIPT (old way):
- *   BaseController.extend("ats.mm.product.controller.View1", {
+ *   BaseController.extend("com.ats.manageorder.controller.View1", {
  *     oRouter: null,
  *     onInit: function() { this.oRouter = this.getOwnerComponent().getRouter(); }
  *   });
