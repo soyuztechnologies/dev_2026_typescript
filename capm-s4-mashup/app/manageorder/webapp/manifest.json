@@ -87,93 +87,76 @@
     "routing": {
       "config": {
         "routerClass": "sap.m.routing.Router",
-        "viewType": "XML",
-        "async": true,
         "viewPath": "com.ats.manageorder.view",
-        "controlAggregation": "pages",
-        "controlId": "app",
-        "clearControlAggregation": false
+        "viewType": "XML",
+        "controlId": "appCon"
       },
       "routes": [
         {
-          "name": "RouteMain",
-          "pattern": ":?query:",
+          "name": "leftSide",
+          "pattern": "",
           "target": [
-            "TargetMain"
+            "donald",
+            "trump"
+          ]
+        },
+        {
+          "name": "spiderman",
+          "pattern": "order/{orderId}",
+          "target": [
+            "donald",
+            "modi"
+          ]
+        },
+        {
+          "name": "addOrder",
+          "pattern": "add",
+          "target": [
+            "donald",
+            "ironman"
+          ]
+        },
+        {
+          "name": "superman",
+          "pattern": "supplier/{supplierId}",
+          "target": [
+            "donald",
+            "putin"
           ]
         }
       ],
       "targets": {
-        "TargetMain": {
-          "viewType": "XML",
-          "transition": "slide",
-          "clearControlAggregation": false,
-          "viewId": "Main",
-          "viewName": "Main"
+        "donald": {
+          "id": "idView1",
+          "viewName": "View1",
+          "controlAggregation": "masterPages"
+        },
+        "trump": {
+          "id": "idEmpty",
+          "viewName": "Empty",
+          "controlAggregation": "detailPages"
+        },
+        "modi": {
+          "id": "idView2",
+          "viewName": "View2",
+          "controlAggregation": "detailPages"
+        },
+        "putin": {
+          "id": "idView3",
+          "viewName": "View3",
+          "controlAggregation": "detailPages"
+        },
+        "ironman": {
+          "id": "idAdd",
+          "viewName": "Add",
+          "controlAggregation": "detailPages"
         }
       }
     },
-    "rootView":{
-            "id": "idRootView",
-            "viewName": "com.ats.manageorder.view.App",
-            "type": "XML"
-        },
-        "routing": {
-            "config":{
-                "routerClass": "sap.m.routing.Router",
-                "viewPath": "com.ats.manageorder.view",
-                "viewType": "XML",
-                "controlId": "appCon"
-            },
-            "routes":[
-                {
-                    "name": "leftSide",
-                    "pattern": "",
-                    "target": ["donald","trump"]
-                },
-                {
-                    "name": "spiderman",
-                    "pattern": "order/{orderId}",
-                    "target": ["donald","modi"]
-                },
-                {
-                    "name": "addOrder",
-                    "pattern": "add",
-                    "target": ["donald","ironman"]
-                },
-                {
-                    "name": "superman",
-                    "pattern": "supplier/{supplierId}",
-                    "target": ["donald","putin"]
-                }
-            ],
-            "targets": {
-                "donald": {
-                    "id": "idView1",
-                    "viewName": "View1",
-                    "controlAggregation": "masterPages"
-                },
-                "trump": {
-                    "id": "idEmpty",
-                    "viewName": "Empty",
-                    "controlAggregation": "detailPages"
-                },
-                "modi": {
-                    "id": "idView2",
-                    "viewName": "View2",
-                    "controlAggregation": "detailPages"
-                },
-                "putin": {
-                    "id": "idView3",
-                    "viewName": "View3",
-                    "controlAggregation": "detailPages"
-                },
-                "ironman": {
-                    "id": "idAdd",
-                    "viewName": "Add",
-                    "controlAggregation": "detailPages"
-                }
-            }
-        }
+    "rootView": {
+      "id": "idRootView",
+      "viewName": "com.ats.manageorder.view.App",
+      "type": "XML"
+    }
   }
 }

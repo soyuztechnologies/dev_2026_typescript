@@ -1,15 +1,28 @@
 {
-    "name": "manageorder",
-    "version": "0.0.1",
-    "description": "An SAP Fiori application.",
-    "keywords": [
-        "ui5",
-        "openui5",
-        "sapui5"
-    ],
-    "main": "webapp/index.html",
-    "scripts": {
-        "deploy-config": "npx -p @sap/ux-ui5-tooling fiori add deploy-config cf"
-    },
-    "devDependencies": { }
+  "name": "manageorder",
+  "version": "0.0.1",
+  "description": "An SAP Fiori application.",
+  "keywords": [
+    "ui5",
+    "openui5",
+    "sapui5"
+  ],
+  "main": "webapp/index.html",
+  "scripts": {
+    "deploy-config": "npx -p @sap/ux-ui5-tooling fiori add deploy-config cf",
+    "start": "ui5 serve --open index.html",
+    "build": "ui5 build --clean-dest",
+    "ts-typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@openui5/ts-types-esm": "^1.120.0",
+    "@ui5/cli": "^4.0.0",
+    "typescript": "^5.3.0",
+    "ui5-tooling-transpile": "^3.2.0",
+    "ui5-middleware-livereload": "^3.1.4",
+    "ui5-task-zipper": "^3"
+  },
+  "dependencies": {
+    "@openui5/ts-types-esm": "^1.148.0"
+  }
 }

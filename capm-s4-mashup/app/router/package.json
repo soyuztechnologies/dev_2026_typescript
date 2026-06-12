@@ -1,0 +1,14 @@
+{
+  "name": "manageorder-approuter",
+  "version": "1.0.0",
+  "description": "App Router for the manageorder Fiori app",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@sap/approuter": "^20.4.0"
+  },
+  "scripts": {
+    "start": "node node_modules/@sap/approuter/approuter.js"
+  }
+}

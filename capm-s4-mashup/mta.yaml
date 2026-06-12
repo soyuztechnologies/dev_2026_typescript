@@ -1,0 +1,91 @@
+_schema-version: "3.2"
+ID: com.ats.manageorder
+version: 0.0.1
+description: "Manage Order - SAPUI5 TypeScript app + CAP backend"
+
+parameters:
+  enable-parallel-deployments: true
+  deploy_mode: html5-repo
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production   # generates gen/srv (backend) + gen/db
+
+modules:
+  # 1) the CAP backend — the OData service the App Router proxies to.
+  #    This is the module that *provides* srv-api/srv-url.
+  - name: manageorder-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}   # consumed by the approuter below
+    requires:
+      - name: manageorder-uaa       # xsuaa binding for token validation
+
+  # 2) the static UI5 app, packaged for the HTML5 repo
+  - name: manageorder-ui
+    type: html5
+    path: app/manageorder          # the UI5 app folder (NOT the root)
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build            # ui5 build → transpiles TS to JS into dist/
+      supported-platforms: []
+
+  # 3) deployer that uploads the UI to the HTML5 application repository
+  - name: manageorder-ui-deployer
+    type: com.sap.application.content
+    path: .                        # required: gives the deployer a build context
+    requires:
+      - name: manageorder-html5-repo-host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - artifacts:
+            - manageorder-ui.zip
+          name: manageorder-ui
+          target-path: resources/
+
+  # 4) the App Router — serves the app and proxies OData to manageorder-srv
+  - name: manageorder-approuter
+    type: approuter.nodejs
+    path: app/router
+    requires:
+      - name: manageorder-html5-repo-runtime
+      - name: manageorder-uaa      # xsuaa: the router handles BTP login
+      - name: srv-api              # matches the 'provides' name on module 1
+        group: destinations
+        properties:
+          name: manageorder-srv    # destination name used in xs-app.json
+          url: ~{srv-url}          # filled from srv-api's srv-url property
+          forwardAuthToken: true   # passes the logged-in user's token to the backend
+
+resources:
+  - name: manageorder-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+  - name: manageorder-html5-repo-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime
+  - name: manageorder-uaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
