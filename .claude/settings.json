@@ -4,7 +4,16 @@
       "Bash(echo \"exit: $?\")",
       "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('manifest.json','utf8'\\)\\); console.log\\('manifest.json: valid JSON'\\);\")",
       "Bash(node -e \"let p=require\\('./package.json'\\); console.log\\('scripts:', JSON.stringify\\(p.scripts||{}, null, 2\\)\\)\")",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(ls tsconfig*.json)",
+      "Bash(cat tsconfig.json)",
+      "Bash(ls node_modules/@openui5/ts-types-esm)",
+      "Bash(ls app/manageorder/node_modules/@openui5/ts-types-esm)",
+      "Bash(npm run *)",
+      "Read(//c/c/testcapm/**)",
+      "Read(//c/c/testcapm/capm-s4-mashup/**)",
+      "Read(//c/c/testcapm/capm-s4-mashup/app/**)",
+      "Bash(mbt build *)"
     ]
   }
 }
