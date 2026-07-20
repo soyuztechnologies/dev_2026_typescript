@@ -1,0 +1,220 @@
+{
+  "_version": "1.81.0",
+  "sap.app": {
+    "id": "anubhav.ui.managepo",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.20.2",
+      "toolsId": "399f46df-cb0d-4414-8540-0a59dc6da60d"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/CatalogService/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.144.1",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {},
+        "sap.f": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "anubhav.ui.managepo.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {
+        "flexibleColumnLayout": {
+          "defaultTwoColumnLayoutType": "TwoColumnsBeginExpanded",
+          "defaultThreeColumnLayoutType": "ThreeColumnsMidExpanded"
+        },
+        "routerClass": "sap.f.routing.Router"
+      },
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "PurchaseOrderSetList",
+          "target": [
+            "PurchaseOrderSetList"
+          ]
+        },
+        {
+          "pattern": "PurchaseOrderSet({key}):?query:",
+          "name": "PurchaseOrderSetObjectPage",
+          "target": [
+            "PurchaseOrderSetList",
+            "PurchaseOrderSetObjectPage"
+          ]
+        },
+        {
+          "pattern": "PurchaseOrderSet({key})/Items({key2}):?query:",
+          "name": "PurchaseItemsSetObjectPage",
+          "target": [
+            "PurchaseOrderSetList",
+            "PurchaseOrderSetObjectPage",
+            "PurchaseItemsSetObjectPage"
+          ]
+        }
+      ],
+      "targets": {
+        "PurchaseOrderSetList": {
+          "type": "Component",
+          "id": "PurchaseOrderSetList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/PurchaseOrderSet",
+              "variantManagement": "Page",
+              "navigation": {
+                "PurchaseOrderSet": {
+                  "detail": {
+                    "route": "PurchaseOrderSetObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  },
+                  "columns": {
+                    "DataField::PO_ID": {
+                      "width": "350px"
+                    },
+                    "DataField::PARTNER_GUID::ADDRESS_GUID::COUNTRY": {
+                      "width": "100px"
+                    }
+                  }
+                }
+              },
+              "initialLoad": "Enabled"
+            }
+          },
+          "controlAggregation": "beginColumnPages",
+          "contextPattern": ""
+        },
+        "PurchaseOrderSetObjectPage": {
+          "type": "Component",
+          "id": "PurchaseOrderSetObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/PurchaseOrderSet",
+              "navigation": {
+                "Items": {
+                  "detail": {
+                    "route": "PurchaseItemsSetObjectPage"
+                  }
+                }
+              },
+              "content": {
+                "body": {
+                  "sections": {
+                    "Anubhav": {
+                      "template": "anubhav.ui.managepo.ext.fragment.Anubhav",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "Items::LineItem"
+                      },
+                      "title": "Anubhav"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "controlAggregation": "midColumnPages",
+          "contextPattern": "/PurchaseOrderSet({key})"
+        },
+        "PurchaseItemsSetObjectPage": {
+          "type": "Component",
+          "id": "PurchaseItemsSetObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/PurchaseOrderSet/Items"
+            }
+          },
+          "controlAggregation": "endColumnPages",
+          "contextPattern": "/PurchaseOrderSet({key})/Items({key2})"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "sap.fe.templates.RootContainer.view.Fcl",
+      "type": "XML",
+      "async": true,
+      "id": "appRootView"
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
+  }
+}

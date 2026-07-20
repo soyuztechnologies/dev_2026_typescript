@@ -1,0 +1,30 @@
+Step 1: How to checkout this project 
+git clone https://github.com/soyuztechnologies/test_btp_capm_batch2026.git mycapapp
+cd mycapapp
+npm install
+cf login --sso
+cds deploy --to hana:mickey
+
+Step 2: You want to deploy to BTP
+mbt build
+cf deploy mta_archives/mycapapp_1.0.0.mtar
+
+Step 3: if you make code changes and want to push to git
+git add . && git commit -m "attachment feature" && git push
+
+Step 4: if you dont want to BUILD and DEPLOY project with MTAR, directly deploy w/o mtar
+cds up
+
+Step 5: if you want to just deploy single microservice, suppose you change a label in UI
+cf deploy mta_archives/mycapapp_1.0.0.mtar -m mycapapp-ui
+
+Step 6: testing destination in bas tool (1 hour)
+cf login --sso
+curl MyCapDest.dest
+curl MyCapDest.dest/odata/v4/CatalogService
+
+cds repl??
+https://www.youtube.com/watch?v=VHyRvg5DssQ
+
+How to start HANA DB with commad on BAS tool
+https://www.youtube.com/watch?v=f0QomvfylYY

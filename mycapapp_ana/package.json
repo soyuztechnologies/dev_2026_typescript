@@ -1,0 +1,76 @@
+{
+  "name": "mycapapp",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "dependencies": {
+    "@cap-js-community/odata-v2-adapter": "^1.15.9",
+    "@cap-js/attachments": "^3.9.0",
+    "@cap-js/hana": "^2",
+    "@sap/cds": "^9",
+    "@sap/ux-specification": "^1.144.1",
+    "@sap/xssec": "^4",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9",
+    "cds-plugin-ui5": "^0.13.0"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-managepo": "cds watch --open anubhav.ui.managepo/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-poanalytics": "cds watch --open po.ana.poanalytics/index.html?sap-ui-xx-viewCache=false --livereload false"
+  },
+  "private": true,
+  "workspaces": [
+    "app/*"
+  ],
+  "sapux": [
+    "app/managepo",
+    "app/project1",
+    "app/poanalytics"
+  ],
+  "cds": {
+    "requires": {
+      "db": {
+        "[development]": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": "db.sqlite"
+          }
+        },
+        "[production]": {
+          "kind": "hana"
+        }
+      },
+      "auth": {
+        "[development]": {
+          "kind": "mocked",
+          "users": {
+            "anubhav": {
+              "password": "Welcome1",
+              "roles": [
+                "Display",
+                "Edit"
+              ],
+              "attr": {
+                "spiderman": [
+                  "My Bank of London"
+                ]
+              }
+            },
+            "ananya": {
+              "password": "ananya",
+              "roles": [
+                "Editor"
+              ]
+            }
+          }
+        },
+        "[production]": {
+          "kind": "xsuaa"
+        }
+      }
+    }
+  }
+}

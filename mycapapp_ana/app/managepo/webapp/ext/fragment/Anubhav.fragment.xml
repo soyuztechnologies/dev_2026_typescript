@@ -1,0 +1,77 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:m="sap.m" xmlns:macros="sap.fe.macros"
+		xmlns="sap.suite.ui.microchart"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:l="sap.ui.layout">
+	<m:VBox core:require="{ handler: 'anubhav/ui/managepo/ext/fragment/Anubhav'}">
+		<m:Button text="Anubhav" press="handler.onPress" />
+			<l:VerticalLayout>
+		<l:HorizontalLayout>
+			<HarveyBallMicroChart size="L" total="360" totalScale="Mrd" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="8" color="Good" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+			<HarveyBallMicroChart size="M" total="100" totalScale="Mrd" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="63.5" color="Good" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+			<HarveyBallMicroChart size="S" total="100" totalScale="Mrd" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="63.5" color="Good" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+			<HarveyBallMicroChart size="XS" total="100" totalScale="Mrd" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="63.5" color="Good" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+		</l:HorizontalLayout>
+		<l:HorizontalLayout>
+			<HarveyBallMicroChart size="L" total="360" totalScale="Mrd" colorPalette="Sequence1" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="352" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+			<HarveyBallMicroChart size="M" total="100" totalScale="Mrd" colorPalette="Sequence1" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="20" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+			<HarveyBallMicroChart size="S" total="100" totalScale="Mrd" colorPalette="Sequence1" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="20" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+			<HarveyBallMicroChart size="XS" total="100" totalScale="Mrd" colorPalette="Sequence1" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="20" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+		</l:HorizontalLayout>
+		<l:HorizontalLayout>
+			<HarveyBallMicroChart size="L" total="360" totalScale="Mrd" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="400" color="Error" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+			<HarveyBallMicroChart size="M" total="100" totalScale="Mrd" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="15" color="Error" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+			<HarveyBallMicroChart size="S" total="100" totalScale="Mrd" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="15" color="Error" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+			<HarveyBallMicroChart size="XS" total="100" totalScale="Mrd" press="press">
+				<items>
+					<HarveyBallMicroChartItem fraction="15" color="Error" fractionScale="Mrd"/>
+				</items>
+			</HarveyBallMicroChart>
+		</l:HorizontalLayout>
+	</l:VerticalLayout>
+	</m:VBox>
+
+</core:FragmentDefinition>
