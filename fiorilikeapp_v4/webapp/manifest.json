@@ -1,0 +1,150 @@
+{
+    "_version" : "1.58.0",
+    "sap.app":{
+        "id":"ey.ap.acc",
+        "type":"application",
+        "i18n": "i18n/i18n.properties",
+        "title" : "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "applicationVersion" :{
+            "version" : "1.0.0"
+        },
+        "dataSources":{
+            "odata-v4-support": {
+                "uri": "/odata/v4/maintenance-order/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "4.0"
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "fullWidth" : true,
+        "deviceTypes": {
+            "desktop" : true,
+            "mobile": true,
+            "tablet": true
+        },
+        "supportedThemes": [
+            "sap_fiori_3",
+            "sap_fiori_3_dark",
+            "sap_horizon_dark"
+        ]
+    },
+    "sap.ui5": {
+        "contentDensities": {
+            "compact" : true,
+            "cosy": true
+        },
+        "resources": {
+            "css":[
+                { "uri": "css/style.css" }
+            ]
+        },
+        "dependencies": {
+            "minUI5Version": "1.145.0",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.layout" : {},
+                "sap.ui.core": {}
+            }
+        },
+        "rootView": {
+            "id": "idRootView",
+            "viewName":"ey.ap.acc.view.App",
+            "type": "XML"
+        },
+        "routing": {
+            "config": {
+                "routerClass": "sap.m.routing.Router",
+                "viewPath": "ey.ap.acc.view",
+                "viewType": "XML",
+                "controlId": "appCon"
+            },
+            "routes": [
+                {
+                    "pattern": "",
+                    "name": "spiderman",
+                    "target": ["donald", "trump"]
+                },
+                {
+                    "pattern": "gayatree/{zkas}",
+                    "name": "superman",
+                    "target": ["donald", "modi"]
+                },
+                {
+                    "pattern": "devendra",
+                    "name": "wonderwomen",
+                    "target": ["donald", "putin"]
+                },
+                {
+                    "pattern": "mc",
+                    "name": "mc",
+                    "target": ["donald", "mc"]
+                }
+            ],
+            "targets": {
+                "donald":{
+                    "viewName":"View1",
+                    "viewId": "idView1",
+                    "controlAggregation": "masterPages",
+                    "clearControlAggregation": true
+                },
+                "trump": {
+                    "viewName":"Empty",
+                    "viewId": "idEmpty",
+                    "controlAggregation": "detailPages",
+                    "clearControlAggregation": true
+                },
+                "modi": {
+                    "viewName":"View2",
+                    "viewId": "idView2",
+                    "controlAggregation": "detailPages",
+                    "clearControlAggregation": true
+                },
+                "putin": {
+                    "viewName":"Add",
+                    "viewId": "idAdd",
+                    "controlAggregation": "detailPages",
+                    "clearControlAggregation": true
+                },
+                "mc": {
+                    "viewName":"MachineComponents",
+                    "viewId": "idMachineComponents",
+                    "controlAggregation": "detailPages",
+                    "clearControlAggregation": true
+                }
+            }
+        },
+        "models": {
+            "" :{
+                "type":"sap.ui.model.odata.v4.ODataModel",
+                "dataSource": "odata-v4-support",
+                "settings": {
+                    "operationMode": "Server",
+                    "autoExpandSelect": false,
+                    "groupId": "$auto",
+                    "earlyRequests": true,
+                    "sharedRequests":true,
+                    "httpHeaders": {
+                        "X-Anubhav-Trainings": "demo"
+                    }
+                }
+            },
+            "local": {
+                "type": "sap.ui.model.json.JSONModel",
+                "uri": "model/mockdata/fruits.json"
+            },
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "i18n/i18n.properties"
+                }
+            }
+
+        }
+
+    }
+}

@@ -1,0 +1,15 @@
+specVersion: "4.0"
+metadata:
+  name: fiorilikeapp
+type: application
+server:
+  customMiddleware:
+  - name: fiori-tools-proxy
+    afterMiddleware: compression
+    configuration:
+      backend:
+      - path: /sap
+        url: http://122.162.240.164:8010
+        destination: ANUBHAV
+      - path: /odata
+        url: https://sample-maintenance-srv-i760021.cfapps.eu12.hana.ondemand.com

@@ -1,0 +1,55 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
+             controllerName="ey.ap.acc.controller.View1">
+
+    <Page title="Products (All)" showNavButton="true" navButtonPress="onNavBack">
+        <headerContent>
+            <Button text="Go to Next" icon="sap-icon://arrow-right" press="onNext"></Button>
+        </headerContent>
+
+        <SearchField id="idSearch" search="onSearch"></SearchField>
+        <!-- absolute path - parent -->
+        <List id="myList" growing="true" growingThreshold="10" items="{
+            path: '/MaintenanceOrder',
+            parameters: {
+                $expand: 'operation'
+            }
+        }" mode="SingleSelectMaster" selectionChange="onSelectItem">  
+            <headerToolbar>
+                <Toolbar >
+                    <ToolbarSpacer ></ToolbarSpacer>
+                    <Button icon="sap-icon://delete" tooltip="Aree Kardo na!" press="onDelete"></Button>
+                </Toolbar>
+            </headerToolbar>
+            <items>
+                <!-- To show a business object which comes with name, title, description, icon -->
+                <!-- relative path - @ child level -->
+                <ObjectListItem title="{number}" intro="{description}"
+                                icon="sap-icon://order"
+                                number="{status}" numberUnit="{ID}"
+                >
+                    <!-- <firstStatus>
+                        <ObjectStatus text="{path : 'availability', formatter: '.formatter.getStatus'}"
+                                      state="{path : 'availability', formatter: '.formatter.getStatusColor'}" ></ObjectStatus>
+                    </firstStatus> -->
+                    <attributes>
+                        <ObjectAttribute title="Work Center" text="{assignedWorkCenter}" ></ObjectAttribute>
+                    </attributes>
+                </ObjectListItem>
+            </items>
+
+        </List>
+        <footer>
+            <Toolbar >
+                <ToolbarSpacer ></ToolbarSpacer>
+                <Button icon="sap-icon://filter" tooltip="Show Orders"
+                        press="onShowOrders"></Button>
+                <Button icon="sap-icon://add" tooltip="Manage Product"
+                        press="onAdd"></Button>
+                <Button icon="sap-icon://menu" tooltip="Machine Components"
+                        press="onMachineComponents"></Button>
+            </Toolbar>
+        </footer>
+        
+    </Page>
+
+</mvc:View>

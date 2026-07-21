@@ -1,0 +1,28 @@
+<html>
+    <head>
+
+        <!-- UI5 bootstrap -> its piece of code we write using script tag -->
+        <!-- to load the ui5 framework and library -->
+        <script src="https://ui5.sap.com/resources/sap-ui-core.js"
+                data-sap-ui-libs="sap.m"
+                data-sap-ui-theme="sap_horizon_dark"
+                data-sap-ui-bindingSyntax="complex"
+                data-sap-ui-resourceroots='{
+                    "ey.ap.acc":"./"
+                }'></script>
+        
+        <script>
+
+            var oCompnentContainer = new sap.ui.core.ComponentContainer({
+                name : "ey.ap.acc"
+            })            ;
+
+            oCompnentContainer.placeAt("content");
+
+        </script>
+    </head>
+    <body class="sapUiBody">
+        <div id="content"></div>
+    </body>
+
+</html>

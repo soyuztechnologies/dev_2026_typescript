@@ -1,0 +1,100 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form"
+             xmlns:core="sap.ui.core"
+             controllerName="ey.ap.acc.controller.View2">
+
+    <Page title="Page 2" showNavButton="true" navButtonPress="onBack">
+        <!-- <Button text="Back" icon="sap-icon://arrow-left" press="onBack"></Button> -->
+
+        <ObjectHeader intro="{description}" title="{number}" icon="sap-icon://order"
+                     number="{status}" numberUnit="{ID}"></ObjectHeader>
+
+
+        <!-- Tab Strip -->
+        <IconTabBar>
+            <items>
+                <!-- Tab1 -->
+                <IconTabFilter text="More Info" icon="sap-icon://warning">
+                    <core:Fragment type="XML" fragmentName="ey.ap.acc.fragments.moreInfo"/>
+                    <!-- <core:Fragment type="XML" fragmentName="ey.ap.acc.fragments.moreInfo"/> -->
+                </IconTabFilter>
+                <!-- Tab2 -->
+                <IconTabFilter text="Suppliers" icon="sap-icon://supplier">
+                    <Table id="myTable" items="{/supplier}">
+                        <columns>
+                            <!-- Column 1 -->
+                            <Column>
+                                <header>
+                                    <Label text="Supplier Name"></Label>
+                                </header>
+                            </Column>
+                            <!-- Column 2 -->
+                            <Column>
+                                <header>
+                                    <Label text="City"></Label>
+                                </header>
+                            </Column>
+                            <!-- Column 3 -->
+                            <Column minScreenWidth="Tablet">
+                                <header>
+                                    <Label text="Since When"></Label>
+                                </header>
+                            </Column>
+                            <!-- Column 3 -->
+                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                <header>
+                                    <Label text="Contact Details"></Label>
+                                </header>
+                            </Column>
+                        
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <!-- one cell per column -->
+                                    <Text text="{name}"></Text>
+                                    <Input value="{city}"></Input>
+                                    <Text text="{sinceWhen}"></Text>
+                                    <VBox>
+                                        <Text text="{person}"></Text>
+                                        <Text text="{contactNo}"></Text>
+                                    </VBox>
+                                </cells>                            
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </IconTabFilter>
+                <!-- Tab3 -->
+                <IconTabFilter text="Cities" icon="sap-icon://home">
+
+                    <Select items="{/cities}">
+                        <items>
+                            <core:Item key="{name}" text="{name}"></core:Item>
+                        </items>
+                    </Select>
+
+                    <ComboBox items="{/cities}">
+                        <items>
+                            <core:Item key="{name}" text="{name}"></core:Item>
+                        </items>
+                    </ComboBox>
+
+                    <MultiComboBox items="{/cities}">
+                        <items>
+                            <core:Item key="{name}" text="{name}"></core:Item>
+                        </items>
+                    </MultiComboBox>
+                
+                </IconTabFilter>
+            </items>
+        </IconTabBar>
+
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer ></ToolbarSpacer>
+                <Button text="Save" type="Accept" press="onSave" icon="sap-icon://save"></Button>
+                <Button text="Clear" type="Emphasized" press="onClear" icon="sap-icon://cancel"></Button>
+            </Toolbar>
+        </footer>
+    </Page>
+
+</mvc:View>

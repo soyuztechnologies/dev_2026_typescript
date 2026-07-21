@@ -1,0 +1,32 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" 
+             xmlns:f="sap.ui.layout.form"
+             xmlns:core="sap.ui.core">
+    <f:SimpleForm>
+        <f:content>
+            <Label text="Maintenance Order"></Label>
+            <Text text="{number} {description}"></Text>
+            <Label text="Status"></Label>
+            <Text text="{status}"></Text>
+            <Label text="Start Date"></Label>
+            <Text text="{scheduledStartDate}"></Text>
+            <Label text="End Date"></Label>
+            <Text text="{scheduledEndDate}"></Text>
+            <Label text="Assigned Work Center"></Label>
+            <Text text="{assignedWorkCenter}"></Text>
+        </f:content>
+
+    </f:SimpleForm>
+
+    <f:SimpleForm title="First Operation Details(Which is OPEN)">
+        <f:content>
+            <Label text="ID and Code"></Label>
+            <Text text="{operation/0/ID} {operation/0/code}"></Text>
+            <Label text="Status"></Label>
+            <Text text="{operation/0/status}"></Text>
+            <Label text="Validity"></Label>
+            <Text text="{operation/0/durationTime} {operation/0/durationUnit}"></Text>
+            <Label text="description"></Label>
+            <Text text="{operation/0/description}"></Text>
+        </f:content>
+    </f:SimpleForm>
+</core:FragmentDefinition>
