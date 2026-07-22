@@ -150,3 +150,7 @@ server:
   - name: ui5-tooling-transpile-middleware
     afterMiddleware: compression
 
+5. Keep changing files and run command to test
+```
+tsc --noEmit
+```
