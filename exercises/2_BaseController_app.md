@@ -20,8 +20,8 @@ export default class CLASSNAME extends PARENTCLASS{
 		return super.BASECLASSMETHD() as DATATYPE;
 	}
 
-    public SELFFUNCTION(): RETURN_TYPE{
-        return SOMEVALUE;
+    SELFFUNCTION = (eventObj: type) : void => {
+        --code
     }
 
 }
@@ -66,7 +66,7 @@ export default class BaseController extends Controller {
 	 * @returns The router instance
 	 */
 	public getRouter(): Router {
-		return UIComponent.getRouterFor(this);
+		return (this.getOwnerComponent() as UIComponent).getRouter();
 	}
 }
 ```

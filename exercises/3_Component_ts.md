@@ -3,7 +3,8 @@
 - adding interface sap.ui.core.IAsyncContentCreation
 - must inclide @namespace
 - explain the messaging in case some old code is there
-- 
+- when have to select multiple lines Ctrl+Alt+Up/Down , even from back side
+- New way of initializing the Component using index.html
 
 ```
 import UIComponent from "sap/ui/core/UIComponent";
