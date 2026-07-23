@@ -77,7 +77,7 @@ context master {
     }
 
     entity StatusCode  {
-        key code: String(1);
+        key STATUS: String(1);
         value : String(10);
     }
 }
@@ -88,7 +88,8 @@ context transaction {
         PO_ID: String(32) @(title: '{i18n>PO_ID}');
         PARTNER_GUID : Association to master.businesspartner @(title: '{i18n>PARTNER_KEY}');
         LIFECYCLE_STATUS: String(1) @(title: '{i18n>OVERALL_STATUS}');
-        OVERALL_STATUS: common.OrderStatus @(title: '{i18n>OVERALL_STATUS}');
+        //OVERALL_STATUS: common.OrderStatus @(title: '{i18n>OVERALL_STATUS}');
+        OVERALL: Association to master.StatusCode  @(title: '{i18n>OVERALL_STATUS}');
         NOTE: String(100) @(title: '{i18n>NOTE}');
         Items: Composition of  many poitems on Items.PARENT_KEY = $self @(title: '{i18n>PO_ITEM_KEY}');
         attachments: Composition of many Attachments;

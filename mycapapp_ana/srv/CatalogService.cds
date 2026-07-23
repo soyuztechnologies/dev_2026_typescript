@@ -15,7 +15,7 @@ service CatalogService @(path: 'CatalogService', requires: 'authenticated-user')
     entity BusinessPartnerSet as projection on master.businesspartner;
     entity AddressSet as projection on master.address;
     @readonly
-    entity StatusCode as projection on master.StatusCode;
+    entity StatusCodeSet as projection on master.StatusCode;
     //@Capabilities : { Deletable : false }
     entity PurchaseOrderSet 
     @(
@@ -27,20 +27,33 @@ service CatalogService @(path: 'CatalogService', requires: 'authenticated-user')
                               Common.DefaultValuesFunction: 'getDeafultValue' ) as projection on transaction.purchaseorder{
         *,
         //CDS Expression language
-        case OVERALL_STATUS
-            when 'P' then 'Pending'
-            when 'A' then 'Approved'
-            when 'X' then 'Rejected'
-            when 'D' then 'Delivered'
+        // case OVERALL_STATUS
+        //     when 'P' then 'Pending'
+        //     when 'A' then 'Approved'
+        //     when 'X' then 'Rejected'
+        //     when 'D' then 'Delivered'
+        //     else 'Unknown'
+        //         end as OverallStatus: String(10),
+        // case OVERALL_STATUS
+        //     when 'P' then 2
+        //     when 'A' then 3
+        //     when 'X' then 1
+        //     when 'D' then 3
+        //     else 0
+        //         end as Spiderman: Integer
+        case when OVERALL.STATUS = 'A' then cast(3 as Integer)
+            when OVERALL.STATUS = 'D' then cast(3 as Integer)
+            when OVERALL.STATUS = 'X' then cast(1 as Integer)
+            when OVERALL.STATUS = 'P' then cast(2 as Integer)
+            else cast(0 as Integer)
+        end as Spiderman : Integer,
+
+        case when OVERALL.STATUS = 'A' then 'Approved'
+            when OVERALL.STATUS = 'D' then 'Delivered'
+            when OVERALL.STATUS = 'X' then 'Cancelled'
+            when OVERALL.STATUS = 'P' then 'Pending'
             else 'Unknown'
-                end as OverallStatus: String(10),
-        case OVERALL_STATUS
-            when 'P' then 2
-            when 'A' then 3
-            when 'X' then 1
-            when 'D' then 3
-            else 0
-                end as Spiderman: Integer
+        end as OverallStatus : String(10)
     }
     actions{
         ///Side effect - a trigger to my action leads to a change of a field value in data
