@@ -1,0 +1,21 @@
+ID,code,description,location,locationDescription
+1,PUMP-P100,Centrifugal Water Pump,PLANT-01,Anubhav Trainings Plant - Building A
+2,CONV-C200,Conveyor Belt Line 2,PLANT-01,Anubhav Trainings Plant - Building A
+3,COOL-T300,Cooling Tower Unit 3,PLANT-02,Anubhav Trainings Plant - Building B
+4,GEN-G400,Diesel Generator Set,PLANT-02,Anubhav Trainings Plant - Building B
+5,HVAC-H500,Rooftop HVAC Unit,PLANT-03,Anubhav Trainings Training Center - Rooftop
+6,COMP-C600,Air Compressor Unit 1,PLANT-01,Plant 01 - Compressor House
+7,BOIL-B700,Steam Boiler Unit 2,PLANT-02,Plant 02 - Boiler House
+8,CRANE-K800,Overhead Gantry Crane,PLANT-01,Plant 01 - Assembly Hall
+9,FORK-F900,Electric Forklift 12,PLANT-03,Warehouse 3
+10,CHIL-H100,Chiller Unit 4,PLANT-02,Plant 02 - Utility Block
+11,TRANS-X200,Power Transformer T2,PLANT-01,Plant 01 - Substation
+12,VALVE-V300,Control Valve Station,PLANT-02,Plant 02 - Process Area
+13,MOTOR-M400,Induction Motor 75kW,PLANT-01,Plant 01 - Motor Pool
+14,PUMP-P500,Booster Pump Station,PLANT-03,Anubhav Trainings Training Center - Utility Room
+15,CONV-C600B,Conveyor Belt Line 5,PLANT-03,Warehouse 3
+16,AHU-A700,Air Handling Unit 2,PLANT-01,Plant 01 - Building A
+17,GEN-G800,Standby Generator 2,PLANT-03,Anubhav Trainings Training Center - Generator Yard
+18,PUMP-P900,Fire Hydrant Pump,PLANT-02,Plant 02 - Fire Station
+19,ELEV-E100,Goods Elevator 1,PLANT-01,Plant 01 - Building A
+20,COOL-T400,Cooling Tower Unit 4,PLANT-02,Plant 02 - Building B

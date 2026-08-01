@@ -1,0 +1,16 @@
+{
+  "name": "maintenance-order",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@cap-js/mcp": "^1.3.0",
+    "@sap/cds": "^10"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^3"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "private": true
+}
