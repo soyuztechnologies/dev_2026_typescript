@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1230" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="arrow-derived" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="1230" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="600" y="34" text-anchor="middle" font-size="22" font-weight="700" fill="#111827">Maintenance Order &#8212; Data Model</text>
+  <text x="600" y="54" text-anchor="middle" font-size="12" fill="#6b7280">maintenance-order/db/schema.cds &#183; namespace maintenanceorder</text>
+
+  <!-- ============ EDGES (drawn first, under boxes) ============ -->
+  <g stroke="#1d4ed8" stroke-width="1.5" fill="none">
+    <!-- E1 MaintenanceOrder -> Operation -->
+    <line x1="600" y1="260" x2="590" y2="308" marker-end="url(#arrow)"/>
+    <!-- E2 Operation -> Note -->
+    <line x1="460" y1="540" x2="222" y2="608" marker-end="url(#arrow)"/>
+    <!-- E3 Operation -> Component -->
+    <line x1="590" y1="540" x2="590" y2="608" marker-end="url(#arrow)"/>
+    <!-- E4 Operation -> Equipment -->
+    <line x1="740" y1="410" x2="838" y2="390" marker-end="url(#arrow)"/>
+    <!-- E5 Operation self-loop (parent / subOperation) -->
+    <path d="M 700,312 C 790,255 815,350 742,352"/>
+    <!-- E6 Component -> Material -->
+    <line x1="590" y1="720" x2="590" y2="808" marker-end="url(#arrow)"/>
+    <!-- E7 Material -> StockLevel (composition) -->
+    <line x1="590" y1="900" x2="590" y2="988" marker-end="url(#arrow)"/>
+    <!-- E8 MaterialStock -> Material -->
+    <line x1="840" y1="875" x2="722" y2="855" marker-end="url(#arrow)"/>
+  </g>
+  <g stroke="#9ca3af" stroke-width="1.5" fill="none" stroke-dasharray="6,4">
+    <!-- E9 MaterialStock -> Component (derived) -->
+    <path d="M 980,808 C 950,700 850,650 722,663" marker-end="url(#arrow-derived)"/>
+    <!-- E10 MaterialStock -> StockLevel (derived) -->
+    <path d="M 980,942 C 950,1020 850,1060 722,1053" marker-end="url(#arrow-derived)"/>
+  </g>
+
+  <!-- Edge labels -->
+  <g font-size="11" fill="#374151">
+    <text x="608" y="288">1&#8202;:&#8202;N</text>
+    <text x="300" y="565">1&#8202;:&#8202;N &#183; note</text>
+    <text x="598" y="578">1&#8202;:&#8202;N &#183; component</text>
+    <text x="748" y="405">N&#8202;:&#8202;1 &#183; equipment</text>
+    <text x="762" y="245">parent / subOperation</text>
+    <text x="598" y="768">N&#8202;:&#8202;1 &#183; material</text>
+    <text x="598" y="948">1&#8202;:&#8202;N &#183; composition</text>
+    <text x="758" y="858">N&#8202;:&#8202;1 &#183; material</text>
+    <text x="828" y="700" fill="#6b7280">derived (same material)</text>
+    <text x="800" y="1010" fill="#6b7280">derived (same material)</text>
+  </g>
+
+  <!-- ============ ENTITY: MaintenanceOrder ============ -->
+  <g>
+    <rect x="460" y="90" width="280" height="170" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5" rx="4"/>
+    <rect x="460" y="90" width="280" height="34" fill="#1d4ed8" rx="4"/>
+    <rect x="460" y="112" width="280" height="12" fill="#1d4ed8"/>
+    <text x="600" y="113" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">MaintenanceOrder</text>
+    <g font-size="12" fill="#111827">
+      <text x="472" y="141" font-weight="700">ID</text><text x="600" y="141">: String [PK]</text>
+      <text x="472" y="161">number</text><text x="600" y="161">: String</text>
+      <text x="472" y="181">description</text><text x="600" y="181">: String (localized)</text>
+      <text x="472" y="201">status</text><text x="600" y="201">: String</text>
+      <text x="472" y="221">scheduledStartDate</text><text x="620" y="221">: DateTime</text>
+      <text x="472" y="241">scheduledEndDate</text><text x="620" y="241">: DateTime</text>
+    </g>
+    <text x="472" y="258" font-size="12" fill="#111827">assignedWorkCenter</text><text x="700" y="258" font-size="12">: String</text>
+  </g>
+
+  <!-- ============ ENTITY: Operation ============ -->
+  <g>
+    <rect x="440" y="310" width="300" height="230" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5" rx="4"/>
+    <rect x="440" y="310" width="300" height="34" fill="#1d4ed8" rx="4"/>
+    <rect x="440" y="332" width="300" height="12" fill="#1d4ed8"/>
+    <text x="590" y="333" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">Operation</text>
+    <g font-size="12" fill="#111827">
+      <text x="452" y="361" font-weight="700">ID</text><text x="620" y="361">: String [PK]</text>
+      <text x="452" y="379">code</text><text x="620" y="379">: String</text>
+      <text x="452" y="397">type</text><text x="620" y="397">: String (localized)</text>
+      <text x="452" y="415">description</text><text x="620" y="415">: String (localized)</text>
+      <text x="452" y="433">status</text><text x="620" y="433">: String</text>
+      <text x="452" y="451">durationTime</text><text x="620" y="451">: Decimal</text>
+      <text x="452" y="469">durationUnit</text><text x="620" y="469">: String</text>
+    </g>
+    <g font-size="12" fill="#1e40af" font-style="italic">
+      <text x="452" y="487">maintenanceOrder</text><text x="620" y="487">: FK &#8594; MaintenanceOrder</text>
+      <text x="452" y="505">equipment</text><text x="620" y="505">: FK &#8594; Equipment</text>
+      <text x="452" y="523">operation</text><text x="620" y="523">: FK &#8594; Operation (self)</text>
+    </g>
+  </g>
+
+  <!-- ============ ENTITY: Equipment ============ -->
+  <g>
+    <rect x="840" y="330" width="260" height="130" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5" rx="4"/>
+    <rect x="840" y="330" width="260" height="34" fill="#1d4ed8" rx="4"/>
+    <rect x="840" y="352" width="260" height="12" fill="#1d4ed8"/>
+    <text x="970" y="353" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">Equipment</text>
+    <g font-size="12" fill="#111827">
+      <text x="852" y="381" font-weight="700">ID</text><text x="990" y="381">: String [PK]</text>
+      <text x="852" y="399">code</text><text x="990" y="399">: String</text>
+      <text x="852" y="417">description</text><text x="990" y="417">: String (localized)</text>
+      <text x="852" y="435">location</text><text x="990" y="435">: String</text>
+      <text x="852" y="453">locationDescription</text>
+    </g>
+    <text x="990" y="453" font-size="12" fill="#111827">: String</text>
+  </g>
+
+  <!-- ============ ENTITY: Note ============ -->
+  <g>
+    <rect x="100" y="610" width="240" height="90" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5" rx="4"/>
+    <rect x="100" y="610" width="240" height="34" fill="#1d4ed8" rx="4"/>
+    <rect x="100" y="632" width="240" height="12" fill="#1d4ed8"/>
+    <text x="220" y="633" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">Note</text>
+    <g font-size="12" fill="#111827">
+      <text x="112" y="661" font-weight="700">ID</text><text x="250" y="661">: String [PK]</text>
+      <text x="112" y="679">content</text><text x="250" y="679">: String</text>
+    </g>
+    <text x="112" y="697" font-size="12" fill="#1e40af" font-style="italic">operation</text>
+    <text x="250" y="697" font-size="12" fill="#1e40af" font-style="italic">: FK &#8594; Operation</text>
+  </g>
+
+  <!-- ============ ENTITY: Component ============ -->
+  <g>
+    <rect x="460" y="610" width="260" height="110" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5" rx="4"/>
+    <rect x="460" y="610" width="260" height="34" fill="#1d4ed8" rx="4"/>
+    <rect x="460" y="632" width="260" height="12" fill="#1d4ed8"/>
+    <text x="590" y="633" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">Component</text>
+    <g font-size="12" fill="#111827">
+      <text x="472" y="661" font-weight="700">ID</text><text x="640" y="661">: String [PK]</text>
+      <text x="472" y="679">quantity</text><text x="640" y="679">: Decimal</text>
+    </g>
+    <g font-size="12" fill="#1e40af" font-style="italic">
+      <text x="472" y="697">material</text><text x="640" y="697">: FK &#8594; Material</text>
+      <text x="472" y="715">operation</text><text x="640" y="715">: FK &#8594; Operation</text>
+    </g>
+  </g>
+
+  <!-- ============ ENTITY: Material ============ -->
+  <g>
+    <rect x="460" y="810" width="260" height="90" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5" rx="4"/>
+    <rect x="460" y="810" width="260" height="34" fill="#1d4ed8" rx="4"/>
+    <rect x="460" y="832" width="260" height="12" fill="#1d4ed8"/>
+    <text x="590" y="833" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">Material</text>
+    <g font-size="12" fill="#111827">
+      <text x="472" y="861" font-weight="700">ID</text><text x="640" y="861">: String [PK]</text>
+      <text x="472" y="879">materialCode</text><text x="640" y="879">: String</text>
+    </g>
+    <text x="472" y="897" font-size="12" fill="#111827">materialDescription</text>
+  </g>
+
+  <!-- ============ ENTITY: MaterialStock ============ -->
+  <g>
+    <rect x="840" y="810" width="280" height="130" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5" rx="4"/>
+    <rect x="840" y="810" width="280" height="34" fill="#1d4ed8" rx="4"/>
+    <rect x="840" y="832" width="280" height="12" fill="#1d4ed8"/>
+    <text x="980" y="833" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">MaterialStock</text>
+    <g font-size="12" fill="#111827">
+      <text x="852" y="861" font-weight="700">ID</text><text x="1000" y="861">: String [PK]</text>
+      <text x="852" y="879">materialCode</text><text x="1000" y="879">: String</text>
+      <text x="852" y="897">materialDescription</text>
+    </g>
+    <text x="852" y="915" font-size="12" fill="#1e40af" font-style="italic">material</text>
+    <text x="1000" y="915" font-size="12" fill="#1e40af" font-style="italic">: FK &#8594; Material</text>
+    <text x="852" y="933" font-size="12" fill="#6b7280" font-style="italic">stockTotal : Decimal (virtual, computed)</text>
+  </g>
+
+  <!-- ============ ENTITY: StockLevel ============ -->
+  <g>
+    <rect x="460" y="990" width="260" height="130" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5" rx="4"/>
+    <rect x="460" y="990" width="260" height="34" fill="#1d4ed8" rx="4"/>
+    <rect x="460" y="1012" width="260" height="12" fill="#1d4ed8"/>
+    <text x="590" y="1013" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">StockLevel</text>
+    <g font-size="12" fill="#111827">
+      <text x="472" y="1041" font-weight="700">ID</text><text x="640" y="1041">: String [PK]</text>
+      <text x="472" y="1059">warehouse</text><text x="640" y="1059">: String</text>
+      <text x="472" y="1077">availableQuantity</text><text x="640" y="1077">: Decimal</text>
+      <text x="472" y="1095">center</text><text x="640" y="1095">: String</text>
+    </g>
+    <text x="472" y="1113" font-size="12" fill="#1e40af" font-style="italic">material</text>
+    <text x="640" y="1113" font-size="12" fill="#1e40af" font-style="italic">: FK &#8594; Material</text>
+  </g>
+
+  <!-- ============ LEGEND ============ -->
+  <g font-size="12" fill="#374151">
+    <rect x="40" y="1160" width="1120" height="60" fill="#f9fafb" stroke="#e5e7eb" rx="4"/>
+    <line x1="60" y1="1180" x2="100" y2="1180" stroke="#1d4ed8" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="108" y="1184">Association / FK (solid, arrow points to the referenced &#8220;one&#8221; side)</text>
+    <line x1="60" y1="1200" x2="100" y2="1200" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrow-derived)"/>
+    <text x="108" y="1204">Derived / computed navigation (not a stored key, e.g. correlated via materialCode)</text>
+    <text x="660" y="1184" font-weight="700">[PK]</text><text x="695" y="1184">Primary key</text>
+    <text x="660" y="1204" font-style="italic" fill="#1e40af">FK</text><text x="695" y="1204">Foreign key / association target</text>
+  </g>
+</svg>

@@ -1,0 +1,46 @@
+@host = http://localhost:4004
+@service = {{host}}/odata/v4/CatalogService
+@id = 9e38cfcf-2759-1fd1-a3f8-5a71ab498873
+
+### GET all Teams
+GET {{service}}/TeamsSet
+Accept: application/json
+
+### GET one Team by id
+GET {{service}}/TeamsSet({{id}})
+Accept: application/json
+
+### POST create a Team
+# NOTE: ZSD_ATS_FIFA_0001's $metadata marks Teams as Insertable:false,
+# so CAP rejects this with 405 ENTITY_IS_NOT_CRUD until that capability is relaxed.
+POST {{service}}/TeamsSet
+Content-Type: application/json
+
+{
+  "team": "India",
+  "captain": "Virat",
+  "coach": "Tite",
+  "score": 9.5,
+  "ranking": 1,
+  "past_wc_wins": 5,
+  "year_of_win": 2002
+}
+
+### PUT update a Team by id
+# NOTE: ZSD_ATS_FIFA_0001's $metadata marks Teams as Updatable:false,
+# so CAP rejects this with 405 ENTITY_IS_NOT_CRUD until that capability is relaxed.
+PUT {{service}}/TeamsSet({{id}})
+Content-Type: application/json
+
+{
+  "team": "Brazil",
+  "captain": "Neymar",
+  "coach": "Tite",
+  "score": 8.0,
+  "ranking": 2,
+  "past_wc_wins": 5,
+  "year_of_win": 2002
+}
+
+###
+DELETE {{service}}/TeamsSet('FAB716C1092D1FD1A4829202DC171B8B')
