@@ -1,0 +1,5 @@
+###Service metadata
+http://localhost:4004/odata/v4/CatalogService
+
+###Teams data
+http://localhost:4004/odata/v4/CatalogService/TeamsSet

@@ -1,0 +1,149 @@
+{
+ "meta": {
+  "creator": "cds-dk 10.0.5"
+ },
+ "$version": "2.0",
+ "definitions": {
+  "ZSD_ATS_FIFA_0001": {
+   "kind": "service",
+   "@cds.external": true,
+   "@Common.ApplyMultiUnitBehaviorForSortingAndFiltering": true,
+   "@Capabilities.FilterFunctions": [
+    "eq",
+    "ne",
+    "gt",
+    "ge",
+    "lt",
+    "le",
+    "and",
+    "or",
+    "contains",
+    "startswith",
+    "endswith",
+    "any",
+    "all"
+   ],
+   "@SAP__support.TechnicalInfoLinks.Url": "../../../../default/iwbep/common/0001/$metadata",
+   "@SAP__support.TechnicalInfoLinks.FunctionImport": "GetTechnicalInfoLinks",
+   "@Capabilities.SupportedFormats": [
+    "application/json",
+    "application/pdf"
+   ],
+   "@PDF.Features.DocumentDescriptionReference": "../../../../default/iwbep/common/0001/$metadata",
+   "@PDF.Features.DocumentDescriptionCollection": "MyDocumentDescriptions",
+   "@PDF.Features.ArchiveFormat": true,
+   "@PDF.Features.Border": true,
+   "@PDF.Features.CoverPage": true,
+   "@PDF.Features.FitToPage": true,
+   "@PDF.Features.FontName": true,
+   "@PDF.Features.FontSize": true,
+   "@PDF.Features.HeaderFooter": true,
+   "@PDF.Features.IANATimezoneFormat": true,
+   "@PDF.Features.Margin": true,
+   "@PDF.Features.Padding": true,
+   "@PDF.Features.ResultSizeDefault": 20000,
+   "@PDF.Features.ResultSizeMaximum": 20000,
+   "@PDF.Features.Signature": true,
+   "@PDF.Features.TextDirectionLayout": true,
+   "@PDF.Features.Treeview": true,
+   "@PDF.Features.UploadToFileShare": true,
+   "@Capabilities.KeyAsSegmentSupported": true,
+   "@Capabilities.AsynchronousRequestsSupported": true
+  },
+  "ZSD_ATS_FIFA_0001.Teams": {
+   "kind": "entity",
+   "@cds.external": true,
+   "@cds.persistence.skip": true,
+   "elements": {
+    "id": {
+     "key": true,
+     "type": "cds.UUID",
+     "notNull": true,
+     "@Common.Label": "UUID",
+     "@Common.QuickInfo": "16-byte UID in 32 chars (hexadecimal)"
+    },
+    "team": {
+     "type": "cds.String",
+     "length": 100,
+     "notNull": true
+    },
+    "captain": {
+     "type": "cds.String",
+     "length": 100,
+     "notNull": true
+    },
+    "coach": {
+     "type": "cds.String",
+     "length": 100,
+     "notNull": true
+    },
+    "score": {
+     "type": "cds.Decimal",
+     "precision": 8,
+     "scale": 2,
+     "notNull": true
+    },
+    "ranking": {
+     "type": "cds.Integer",
+     "notNull": true
+    },
+    "past_wc_wins": {
+     "type": "cds.Integer",
+     "notNull": true
+    },
+    "year_of_win": {
+     "type": "cds.Integer",
+     "notNull": true
+    },
+    "created_by": {
+     "type": "cds.String",
+     "length": 12,
+     "notNull": true,
+     "@Common.IsUpperCase": true,
+     "@Common.Label": "Created By",
+     "@Common.QuickInfo": "Created By User",
+     "@Common.DocumentationRef": "urn:sap-com:documentation:key?=type=DE&id=ABP_CREATION_USER"
+    },
+    "created_on": {
+     "type": "cds.Timestamp",
+     "@odata.Precision": 7,
+     "@odata.Type": "Edm.DateTimeOffset",
+     "@Common.Label": "Created On",
+     "@Common.QuickInfo": "Creation Date Time",
+     "@Common.DocumentationRef": "urn:sap-com:documentation:key?=type=DE&id=ABP_CREATION_TSTMPL"
+    },
+    "changed_by": {
+     "type": "cds.String",
+     "length": 12,
+     "notNull": true,
+     "@Common.IsUpperCase": true,
+     "@Common.Label": "Changed By",
+     "@Common.QuickInfo": "Last Changed By User",
+     "@Common.DocumentationRef": "urn:sap-com:documentation:key?=type=DE&id=ABP_LASTCHANGE_USER"
+    },
+    "changed_on": {
+     "type": "cds.Timestamp",
+     "@odata.Precision": 7,
+     "@odata.Type": "Edm.DateTimeOffset",
+     "@Common.Label": "Changed On",
+     "@Common.QuickInfo": "Last Change Date Time",
+     "@Common.DocumentationRef": "urn:sap-com:documentation:key?=type=DE&id=ABP_LASTCHANGE_TSTMPL"
+    },
+    "local_last_changed_on": {
+     "type": "cds.Timestamp",
+     "@odata.Precision": 7,
+     "@odata.Type": "Edm.DateTimeOffset",
+     "@Common.Label": "Changed On",
+     "@Common.QuickInfo": "Local Instance Last Change Date Time",
+     "@Common.DocumentationRef": "urn:sap-com:documentation:key?=type=DE&id=ABP_LOCINST_LASTCHANGE_TSTMPL"
+    }
+   },
+   "@Common.Label": "Fifa teams",
+   "@Capabilities.SearchRestrictions.Searchable": false,
+   "@Capabilities.InsertRestrictions.Insertable": false,
+   "@Capabilities.DeleteRestrictions.Deletable": false,
+   "@Capabilities.UpdateRestrictions.Updatable": false,
+   "@Capabilities.UpdateRestrictions.QueryOptions.SelectSupported": true
+  }
+ }
+}

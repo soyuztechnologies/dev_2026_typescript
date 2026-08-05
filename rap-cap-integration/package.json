@@ -1,0 +1,18 @@
+{
+  "cds": {
+    "requires": {
+      "ZSD_ATS_FIFA_0001": {
+        "kind": "odata",
+        "model": "srv/external/ZSD_ATS_FIFA_0001"
+      },
+      "destinations": true
+    }
+  },
+  "dependencies": {
+    "@sap-cloud-sdk/connectivity": "^4",
+    "@sap-cloud-sdk/http-client": "^4",
+    "@sap-cloud-sdk/resilience": "^4",
+    "@sap/cds": "^10.0.5",
+    "dotenv": "^17.4.2"
+  }
+}
