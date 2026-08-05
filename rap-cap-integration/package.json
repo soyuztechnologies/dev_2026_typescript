@@ -1,11 +1,18 @@
 {
+  "scripts": {
+    "start": "cds-serve"
+  },
   "cds": {
     "requires": {
       "ZSD_ATS_FIFA_0001": {
         "kind": "odata",
-        "model": "srv/external/ZSD_ATS_FIFA_0001"
+        "model": "srv/external/ZSD_ATS_FIFA_0001",
+        "csrf": true
       },
-      "destinations": true
+      "destinations": true,
+      "auth":{
+        "kind": "dummy"
+      }
     }
   },
   "dependencies": {

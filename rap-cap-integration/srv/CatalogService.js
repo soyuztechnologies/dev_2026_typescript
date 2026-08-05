@@ -14,8 +14,9 @@ module.exports = class CatalogService extends cds.ApplicationService { async ini
                 }
   });
 
-  this.before (['CREATE', 'UPDATE'], TeamsSet, async (req) => {
+  this.on (['CREATE', 'UPDATE'], TeamsSet, async (req) => {
     console.log('Before CREATE/UPDATE TeamsSet', req.data)
+    return  service.tx(req).run(req.query);
   })
   
   this.on ('READ', TeamsSet, async (req) => {

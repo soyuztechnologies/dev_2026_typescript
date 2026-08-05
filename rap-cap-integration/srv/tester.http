@@ -3,3 +3,17 @@ http://localhost:4004/odata/v4/CatalogService
 
 ###Teams data
 http://localhost:4004/odata/v4/CatalogService/TeamsSet
+
+###Create data in RAP using CAP
+POST http://localhost:4004/odata/v4/CatalogService/TeamsSet
+Content-Type: application/json
+
+{
+    "team": "India",
+    "captain": "Virat",
+    "coach": "Kapil",
+    "score": 1200.5,
+    "ranking": 8,
+    "past_wc_wins": 0,
+    "year_of_win": 0
+}
