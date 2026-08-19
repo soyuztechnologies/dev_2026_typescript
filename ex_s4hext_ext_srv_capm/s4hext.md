@@ -46,67 +46,62 @@ service CatalogService @(path:'CatalogService') {
 ### CatalogService.js
 
 ```
-const cds = require('@sap/cds');
+const cds = require('@sap/cds')
 require('dotenv').config();
 const moment = require('moment');
 
-module.exports = cds.service.impl(async function(srv){
+module.exports = class CatalogService extends cds.ApplicationService { init() {
 
-    const { MySalesOrder } = this.entities;
-    
-    var getAllSalesOrders = async function(){
-        const { opApiSalesOrderSrv0001 } = require('./src/generated/OP_API_SALES_ORDER_SRV_0001');
-        const { salesOrderApi } = opApiSalesOrderSrv0001();
-        const dataSalesData = await salesOrderApi.requestBuilder().getAll().top(30)
-        .select(
-            salesOrderApi.schema.SALES_ORDER,
-            salesOrderApi.schema.SALES_ORGANIZATION,
-            salesOrderApi.schema.SALES_ORDER_TYPE,
-            salesOrderApi.schema.SOLD_TO_PARTY,
-            salesOrderApi.schema.PAYMENT_METHOD,
-            salesOrderApi.schema.TO_ITEM
-        )
-        .execute({
-            // destinationName: "CFN"
-            "url": process.env.URL,
-            "username": process.env.USER,
-            "password": process.env.PASSWORD
-        });
-        return dataSalesData;
-    };
+  const { MySalesOrder } = cds.entities('bosch.s4hext.CatalogService')
 
-    srv.on('READ', MySalesOrder, async(req) => {
-        return await getAllSalesOrders().then(
-            salesOrderTable => {
-                var aRecord = [];
-                console.log(salesOrderTable);
-                salesOrderTable.forEach(element => {
-                    var item = {};
-                    item.SalesOrder = element.salesOrder;
-                    item.SalesOrganization = element.salesOrganization;
-                    item.SalesOrderType = element.salesOrderType;
-                    item.SoldToParty = element.soldToParty;
-                    item.PaymentMethod = element.paymentMethod;
-                    if(element.toItem[0]){
-                        item.Material = element.toItem[0].material;
-                        item.RequestedQuantity = element.toItem[0].requestedQuantity;
-                        item.NetAmount = element.toItem[0].netAmount;
-                    }else{
-                        item.Material = "";
-                        item.RequestedQuantity = "";
-                        item.NetAmount = "";
-                    }
-                    
-                    aRecord.push(item);
-                });
-                return aRecord;
-            }
-        );
-    });
+  const getAllOrders = async function(orderId){
+    const { opApiSalesOrderSrv0001 } = require("./src/generated/OP_API_SALES_ORDER_SRV_0001");
+    const { salesOrderApi } = opApiSalesOrderSrv0001();
+    if(orderId){
+        const dataSales = await salesOrderApi.requestBuilder().getByKey(orderId)
+                                    .select(
+                                      salesOrderApi.schema.SALES_ORDER,
+                                      salesOrderApi.schema.SALES_ORGANIZATION,
+                                      salesOrderApi.schema.SALES_ORDER_TYPE,
+                                      salesOrderApi.schema.SOLD_TO_PARTY,
+                                      salesOrderApi.schema.DISTRIBUTION_CHANNEL,
+                                      salesOrderApi.schema.ORGANIZATION_DIVISION,
+                                      salesOrderApi.schema.PAYMENT_METHOD,
+                                      salesOrderApi.schema.TO_ITEM
+                                    )
+                                    .execute({
+                                      // destinationName: "S4HANA"
+                                      "url": process.env.URL,
+                                      "username" : process.env.USER,
+                                      "password": process.env.PASSWORD
+                                    });
+          return [dataSales];   
+    }else{
+            const dataSales = await salesOrderApi.requestBuilder().getAll()
+                                    .select(
+                                      salesOrderApi.schema.SALES_ORDER,
+                                      salesOrderApi.schema.SALES_ORGANIZATION,
+                                      salesOrderApi.schema.SALES_ORDER_TYPE,
+                                      salesOrderApi.schema.SOLD_TO_PARTY,
+                                      salesOrderApi.schema.DISTRIBUTION_CHANNEL,
+                                      salesOrderApi.schema.ORGANIZATION_DIVISION,
+                                      salesOrderApi.schema.PAYMENT_METHOD,
+                                      salesOrderApi.schema.TO_ITEM
+                                    )
+                                    .top(20)
+                                    .execute({
+                                      // destinationName: "S4HANA"
+                                      "url": process.env.URL,
+                                      "username" : process.env.USER,
+                                      "password": process.env.PASSWORD
+                                    });
+          return dataSales;         
+                          }                
+  }
 
-    srv.on('CREATE', MySalesOrder, async (req) => {
 
-        const payload = req.data;
+  this.on ('CREATE', MySalesOrder, async (req) => {
+    const payload = req.data;
 
         const { opApiSalesOrderSrv0001 } = require('./src/generated/OP_API_SALES_ORDER_SRV_0001');
         const { salesOrderApi, salesOrderItemApi } = opApiSalesOrderSrv0001();
@@ -138,6 +133,7 @@ module.exports = cds.service.impl(async function(srv){
                 .requestBuilder()
                 .create(salesOrder)
                 .execute({
+                    // destinationName: "S4HANA"
                     url: process.env.URL,
                     username: process.env.USER,
                     password: process.env.PASSWORD
@@ -150,8 +146,51 @@ module.exports = cds.service.impl(async function(srv){
             req.error(500, error.message);
         }
 
-    });
-});
+
+  })
+
+  this.on ('READ', MySalesOrder, async (req) => {
+    debugger;
+    const orderId = req.data.SalesOrder;
+    return await getAllOrders(orderId).then(
+      allOrders => {
+        var aRecord = [];
+        //console.log(allOrders);
+        allOrders.forEach(element => {
+          var item = {};
+          item.SalesOrder = element.salesOrder;
+          item.SalesOrganization = element.salesOrganization;
+          item.SalesOrderType = element.salesOrderType;
+          item.SoldToParty = element.soldToParty;
+          item.PaymentMethod = element.PaymentMethod;
+          item.DistributionChannel = element.distributionChannel;
+          item.OrganizationDivision = element.organizationDivision;
+          if(element.toItem[0]){
+            item.Material = element.toItem[0].material;
+            item.RequestedQuantity = element.toItem[0].requestedQuantity;
+            item.NetAmount = element.toItem[0].netAmount;
+          }else{
+            item.Material = "";
+            item.RequestedQuantity = 0;
+            item.NetAmount = 0;
+          }
+          aRecord.push(item);
+          console.log(aRecord)  ;
+        });
+
+        
+        return aRecord;
+      }
+      
+    );
+
+  })
+
+
+  return super.init()
+}}
+
+
 ```
 
 tester.http
