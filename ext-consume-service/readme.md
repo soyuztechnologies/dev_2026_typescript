@@ -1,5 +1,7 @@
 # Getting Started
 
+cds repl --run PROJECT/
+.ql
 
 
 
