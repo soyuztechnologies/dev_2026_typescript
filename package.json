@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@capire/xflights-data": "^1.2.6"
+  }
+}
