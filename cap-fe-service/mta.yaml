@@ -1,0 +1,69 @@
+_schema-version: 3.3.0
+ID: cap-fe-service
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+  deploy_mode: html5-repo
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+modules:
+  - name: cap-fe-service-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      instances: 1
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+
+  - name: cap-fe-service-app-deployer
+    type: com.sap.application.content
+    path: gen
+    build-parameters:
+      build-result: app/
+      requires:
+        - name: capfeservicebooksapp
+          artifacts:
+            - booksapp.zip
+          target-path: app/
+    requires:
+      - name: srv-api
+      - name: cap-fe-service-app-front
+        parameters:
+          content-target: true
+    parameters:
+      config:
+        destinations:
+          - name: srv-api
+            url: ~{srv-api/srv-url}
+            forwardAuthToken: true
+          - name: ui5
+            url: https://ui5.sap.com
+
+  - name: capfeservicebooksapp
+    type: html5
+    path: app/booksapp
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms:
+        []
+
+resources:
+  - name: cap-fe-service-app-front
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: app-front
+      service-plan: developer

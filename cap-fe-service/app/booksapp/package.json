@@ -1,0 +1,19 @@
+{
+    "name": "booksapp",
+    "version": "0.0.1",
+    "description": "An SAP Fiori application.",
+    "keywords": [
+        "ui5",
+        "openui5",
+        "sapui5"
+    ],
+    "main": "webapp/index.html",
+    "scripts": {
+        "build": "ui5 build --config ui5-deploy.yaml --clean-dest",
+        "deploy-config": "npx -p @sap/ux-ui5-tooling fiori add deploy-config cf"
+    },
+    "devDependencies": {
+        "@ui5/cli": "^4.0.62",
+        "ui5-task-zipper": "^3.7.0"
+    }
+}

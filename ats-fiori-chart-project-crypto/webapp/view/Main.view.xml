@@ -1,0 +1,265 @@
+<mvc:View
+    controllerName="project1.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:viz.data="sap.viz.ui5.data"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds">
+
+    <Page
+        id="mainPage"
+        showHeader="true"
+        class="atsTerminalPage">
+
+        <customHeader>
+            <Bar class="atsHeaderBar">
+
+                <contentLeft>
+                    <HBox alignItems="Center" class="atsHeaderLeft">
+
+                        <Image
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz0FgW7W-jokqfKZx75EtlNk7awNvevjOFR-aLhsn6xss4PLAjYOrp_uQ&amp;s=10"
+                            class="atsLogo"
+                            width="36px"
+                            height="36px" />
+
+                        <VBox class="sapUiTinyMarginBegin">
+                            <Title
+                                text="ANUBHAV TRAININGS"
+                                level="H1"
+                                class="atsBrandTitle" />
+                            <Text
+                                text="$ATS // SOLANA TERMINAL"
+                                class="atsBrandSubtitle" />
+                        </VBox>
+
+                    </HBox>
+                </contentLeft>
+
+                <contentRight>
+                    <HBox alignItems="Center" class="atsHeaderRight">
+
+                        <ObjectStatus
+                            id="liveStatus"
+                            text="LIVE"
+                            state="Success"
+                            icon="sap-icon://status-positive"
+                            class="atsLiveBadge" />
+
+                        <Button
+                            icon="sap-icon://refresh"
+                            tooltip="Refresh"
+                            class="atsIconBtn sapUiTinyMarginBegin"
+                            press=".onRefresh" />
+
+                    </HBox>
+                </contentRight>
+
+            </Bar>
+        </customHeader>
+
+        <content>
+
+            <!-- Price Cards -->
+            <HBox
+                id="statsContainer"
+                wrap="Wrap"
+                class="atsStatsRow">
+
+                <!-- Price -->
+                <VBox
+                    width="230px"
+                    class="atsCard atsCardAccentCyan">
+
+                    <ObjectHeader
+                        title="PRICE"
+                        number="{/price}"
+                        numberUnit="USD"
+                        numberState="None" />
+
+                </VBox>
+
+
+                <!-- 24h Change -->
+                <VBox
+                    width="230px"
+                    class="atsCard atsCardAccentMagenta">
+
+                    <ObjectHeader
+                        title="24H CHANGE"
+                        number="{/change24h}"
+                        numberUnit="%"
+                        numberState="{/changeState}" />
+
+                </VBox>
+
+
+                <!-- Market Cap -->
+                <VBox
+                    width="230px"
+                    class="atsCard atsCardAccentCyan">
+
+                    <ObjectHeader
+                        title="MARKET CAP"
+                        number="{/marketCap}"
+                        numberUnit="USD" />
+
+                </VBox>
+
+
+                <!-- Volume -->
+                <VBox
+                    width="230px"
+                    class="atsCard atsCardAccentMagenta">
+
+                    <ObjectHeader
+                        title="24H VOLUME"
+                        number="{/volume24h}"
+                        numberUnit="USD" />
+
+                </VBox>
+
+            </HBox>
+
+
+            <!-- Chart -->
+            <VBox class="atsChartPanel">
+
+                <Toolbar class="atsChartToolbar">
+                    <Title
+                        text="ATS / USD"
+                        level="H2"
+                        class="atsChartTitle" />
+
+                    <ToolbarSpacer />
+
+                    <Button
+                        text="1H"
+                        class="atsTimeBtn"
+                        press=".onTimeRangePress" />
+
+                    <Button
+                        text="6H"
+                        class="atsTimeBtn"
+                        press=".onTimeRangePress" />
+
+                    <Button
+                        text="24H"
+                        class="atsTimeBtn atsTimeBtnActive"
+                        press=".onTimeRangePress" />
+
+                </Toolbar>
+
+
+<viz:VizFrame
+    id="priceChart"
+    uiConfig="{applicationSet:'fiori'}"
+    vizType="line"
+    width="100%"
+    height="450px"
+    class="atsChart"
+    selectData=".onChartSelect">
+
+    <viz:dataset>
+
+        <viz.data:FlattenedDataset
+            data="{/chartData}">
+
+            <viz.data:dimensions>
+
+                <viz.data:DimensionDefinition
+                    name="Time"
+                    value="{time}" />
+
+            </viz.data:dimensions>
+
+            <viz.data:measures>
+
+                <viz.data:MeasureDefinition
+                    name="Price"
+                    value="{price}" />
+
+            </viz.data:measures>
+
+        </viz.data:FlattenedDataset>
+
+    </viz:dataset>
+
+    <viz:feeds>
+
+        <viz.feeds:FeedItem
+            uid="categoryAxis"
+            type="Dimension"
+            values="Time" />
+
+        <viz.feeds:FeedItem
+            uid="valueAxis"
+            type="Measure"
+            values="Price" />
+
+    </viz:feeds>
+
+</viz:VizFrame>
+
+
+            </VBox>
+
+
+            <!-- Token Information -->
+            <Panel
+                headerText="TOKEN INFORMATION"
+                class="atsPanel">
+
+                <VBox class="sapUiMediumMargin">
+
+                    <Label text="Contract Address" class="atsLabel" />
+
+                    <Text
+                        text="{/contract}"
+                        class="atsMonoValue sapUiTinyMarginBottom" />
+
+                    <Label text="Network" class="atsLabel" />
+
+                    <Text
+                        text="Solana"
+                        class="atsMonoValue sapUiTinyMarginBottom" />
+
+                    <Label text="Last Updated" class="atsLabel" />
+
+                    <Text
+                        text="{/lastUpdated}"
+                        class="atsMonoValue" />
+                    
+                    <!-- <Label text="Invest Now for 100x 🚀🚀" class="atsLabel"></Label>
+                    <Link text="Invest Now" href="https://pump.fun/coin/4cQ9BeG6bdpkQcYGadqc1n6nCWgMuoHZenVH1xXepump"></Link> -->
+                </VBox>
+
+            </Panel>
+
+
+            <!-- Footer Actions -->
+            <HBox
+                justifyContent="Center"
+                class="atsFooter">
+
+                <Button
+                    text="Open Pump.fun"
+                    icon="sap-icon://world"
+                    type="Emphasized"
+                    class="atsBtnPrimary"
+                    press=".onOpenPump" />
+
+                <Button
+                    text="Copy Contract"
+                    icon="sap-icon://copy"
+                    class="atsBtnSecondary sapUiSmallMarginBegin"
+                    press=".onCopyContract" />
+
+            </HBox>
+
+        </content>
+
+    </Page>
+
+</mvc:View>

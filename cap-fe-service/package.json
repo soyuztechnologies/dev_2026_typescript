@@ -1,0 +1,27 @@
+{
+  "name": "cap-fe-service",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@sap/cds": "^10"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^3",
+    "@sap/cds-dk": "^10"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "private": true,
+  "cds": {
+    "requires": {
+      "app-front": true,
+      "auth": {
+        "kind": "dummy"
+      }
+    }
+  },
+  "sapux": [
+    "app/booksapp"
+  ]
+}

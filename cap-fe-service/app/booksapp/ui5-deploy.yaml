@@ -1,0 +1,12 @@
+specVersion: "2.5"
+metadata:
+  name: books.booksapp
+type: application
+builder:
+  customTasks:
+    - name: ui5-task-zipper
+      afterTask: generateComponentPreload
+      configuration:
+        archiveName: booksapp
+        additionalFiles:
+          "xs-app.json": ~
