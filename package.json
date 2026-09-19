@@ -1,4 +1,32 @@
 {
+  "name": "testcapm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Workspace root for all Fiori/CAP/TypeScript training projects in this repo",
+  "workspaces": [
+    "ats-fiori-chart-project-crypto",
+    "cap-fe-service",
+    "cap-fe-service/app/*",
+    "cap-mcp",
+    "capm-s4-mashup",
+    "capm-s4-mashup/app/*",
+    "capts",
+    "com.ats",
+    "demo",
+    "ext-consume-service",
+    "fiorilikeapp",
+    "fiorilikeapp_v4",
+    "maintenance-order",
+    "mycapapp_ana",
+    "mycapapp_ana/app",
+    "mycapapp_ana/app/*",
+    "my-ts-node-app",
+    "rap-cap-integration",
+    "s4hext",
+    "type_scripts",
+    "ui_cap_ts_flex",
+    "ui_cap_ts_flex/app/*"
+  ],
   "dependencies": {
     "@capire/xflights-data": "^1.2.6"
   }
