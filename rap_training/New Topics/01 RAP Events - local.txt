@@ -32,6 +32,34 @@ Step 3: Declare Event with abs entity
 Step 4: Raise event 
 
 
+  METHOD save_modified.
+    DATA: events_to_be_raised TYPE TABLE FOR EVENT ZR_Travel665~StatusUpdated.
+
+    "raise the event whenever the status is changed
+    IF update-travel IS NOT INITIAL.
+
+      LOOP AT update-travel INTO DATA(update_travel).
+        CLEAR events_to_be_raised.
+
+        IF update_travel-%control-Status = if_abap_behv=>mk-on.
+
+          IF update_travel-Status = zrap200_if_travel665=>travel_status-planned.
+            "start review workflow if the review status is set to planned
+            DATA(process_monitor_string) = zrap200_start_bgpf_665=>run_via_bgpf_tx_uncontrolled(
+              EXPORTING
+                i_rap_bo_entity = update_travel
+            ).
+          ENDIF.
+
+          APPEND INITIAL LINE TO events_to_be_raised.
+          events_to_be_raised[ 1 ] = CORRESPONDING #( update_travel ).
+          RAISE ENTITY EVENT ZR_Travel665~StatusUpdated FROM events_to_be_raised.
+
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+  ENDMETHOD.
 
 ---
 Step 5: Create a new DB Table
