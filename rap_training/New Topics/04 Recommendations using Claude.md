@@ -1,41 +1,85 @@
-  // Approach 2 - generative: ABAP AI SDK writes a product review into Notes
-  determination productreview on modify { create; field ItemText; }
+Step 1: Add side effect and determination
+
+```
+managed implementation in class ZBP_R_ATS_AB_EQUIP unique;
+strict ( 2 );
+with draft;
+extensible;
+define behavior for ZR_ATS_AB_EQUIP alias ZrAtsAbEquip
+persistent table ZATS_AB_EQUIP
+extensible
+draft table ZATS_AB_EQUIP_D
+etag master LocalLastChangedAt
+lock master total etag LastChangedAt
+authorization master( global )
+with additional save with full data
+{
+  field ( readonly )
+   OrderUUID,
+   LocalCreatedBy,
+   LocalCreatedAt,
+   LocalLastChangedBy,
+   LocalLastChangedAt,
+   LastChangedAt;
+
+  field ( numbering : managed )
+   OrderUUID;
+
+  action (features : instance) approveRequest result [1] $self;
+
+  create;
+  update;
+  delete;
+
+  event eqip_req_accepted parameter ZA_ATS_AB_EQUIPMENT;
+  event StatusUpdated for side effects;
+
+  //add logic for supporting recommendations
+  field (recommendations) ItemText;
+  recommendation function getItemTexts;
+
+  side effects {
+    event StatusUpdated affects field ( OverallStatus, Review );
+    recommendation function getItemTexts
+        executed on field CategoryId;
+    field ItemText affects field Review;
+  }
+
+  determination productReview on modify { create; field ItemText; }
 
 
-  "-------------------------------------------------------------------
-  " Approach 2 : ABAP AI SDK - LLM generates a product review into Notes
-  "-------------------------------------------------------------------
-  METHOD productreview.
 
-    READ ENTITIES OF zr_item_list IN LOCAL MODE
-      ENTITY ZrItemList
-        FIELDS ( ItemText Notes )
-        WITH CORRESPONDING #( keys )
-      RESULT DATA(itemlists).
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Edit;
+  draft action Resume;
+  draft determine action Prepare;
 
-    LOOP AT itemlists ASSIGNING FIELD-SYMBOL(<itemlist>).
-      IF <itemlist>-ItemText IS NOT INITIAL.
-        zcl_items_util_anthropic=>get_reco_value_from_anthropic(
-          EXPORTING iv_itemtext = CONV #( <itemlist>-ItemText )
-          IMPORTING ev_notes    = DATA(lv_response) ).
-        <itemlist>-Notes = lv_response.
-      ENDIF.
-    ENDLOOP.
+  mapping for ZATS_AB_EQUIP corresponding extensible
+  {
+    OrderUUID = ORDER_UUID;
+    ItemText = ITEM_TEXT;
+    CategoryID = CATEGORY_ID;
+    SupplierName = SUPPLIER_NAME;
+    UnitPrice = UNIT_PRICE;
+    CurrencyCode = CURRENCY_CODE;
+    Quantity = QUANTITY;
+    DeliveryDate = DELIVERY_DATE;
+    OverallStatus = OVERALL_STATUS;
+    Review = REVIEW;
+    LocalCreatedBy = LOCAL_CREATED_BY;
+    LocalCreatedAt = LOCAL_CREATED_AT;
+    LocalLastChangedBy = LOCAL_LAST_CHANGED_BY;
+    LocalLastChangedAt = LOCAL_LAST_CHANGED_AT;
+    LastChangedAt = LAST_CHANGED_AT;
+  }
 
-    " Fix vs. video: use the FOR variable, not the field symbol
-    " (the field symbol only points to the LAST row after the loop)
-    MODIFY ENTITIES OF zr_item_list IN LOCAL MODE
-      ENTITY ZrItemList
-        UPDATE FIELDS ( Notes )
-        WITH VALUE #( FOR itemlist IN itemlists
-                      ( %tky  = itemlist-%tky
-                        Notes = itemlist-Notes ) ).
-  ENDMETHOD.
+}
+```
 
+Step 2: Class to call the claude code
 
-
-
-
+```
 "=====================================================================
 " 5. UTILITY CLASS - DIRECT ANTHROPIC API (generative product review)
 "    No ISLM scenario / no Gen AI Hub - plain HTTPS call with API key
@@ -56,7 +100,7 @@ CLASS zcl_items_util_anthropic DEFINITION PUBLIC FINAL CREATE PUBLIC.
   PRIVATE SECTION.
     CONSTANTS:
       c_url         TYPE string VALUE 'https://api.anthropic.com/v1/messages',
-      c_api_key     TYPE string VALUE '*****',   " <-- put your key here
+      c_api_key     TYPE string VALUE '<YOUR API KEY>',   " <-- put your key here
       c_api_version TYPE string VALUE '2023-06-01',               " required header
       c_model       TYPE string VALUE 'claude-haiku-5-5'.         " or 'claude-sonnet-5-5'
 
@@ -194,3 +238,46 @@ CLASS zcl_items_util_anthropic IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+```
+
+Step 3: Determination implementation
+
+```
+
+  METHOD productReview.
+
+    READ ENTITIES OF ZR_ATS_AB_EQUIP IN LOCAL MODE
+        ENTITY ZrAtsAbEquip
+        FIELDS ( ItemText Review )
+        WITH CORRESPONDING #( keys )
+        RESULT data(itemlists).
+
+
+    LOOP at itemlists ASSIGNING FIELD-SYMBOL(<itemlist>).
+
+        if <itemlist>-ItemText is not initial.
+
+            zcl_items_util_anthropic=>get_reco_value_from_anthropic(
+              EXPORTING
+                iv_itemtext = CONV #( <itemlist>-ItemText )
+              IMPORTING
+                ev_notes    = data(lv_response)
+            ).
+            <itemlist>-Review = lv_response.
+
+        ENDIF.
+
+    ENDLOOP.
+
+    MODIFY ENTITIES OF ZR_ATS_AB_EQUIP IN LOCAL MODE
+        ENTITY ZrAtsAbEquip
+        UPDATE FIELDS ( Review )
+        WITH VALUE #( FOR itemlist in itemlists (
+                %tky = itemlist-%tky
+                Review = itemlist-Review
+         ) ).
+
+
+  ENDMETHOD.
+
+```
