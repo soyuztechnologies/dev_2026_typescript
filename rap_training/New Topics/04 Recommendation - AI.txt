@@ -1,0 +1,196 @@
+  // Approach 2 - generative: ABAP AI SDK writes a product review into Notes
+  determination productreview on modify { create; field ItemText; }
+
+
+  "-------------------------------------------------------------------
+  " Approach 2 : ABAP AI SDK - LLM generates a product review into Notes
+  "-------------------------------------------------------------------
+  METHOD productreview.
+
+    READ ENTITIES OF zr_item_list IN LOCAL MODE
+      ENTITY ZrItemList
+        FIELDS ( ItemText Notes )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(itemlists).
+
+    LOOP AT itemlists ASSIGNING FIELD-SYMBOL(<itemlist>).
+      IF <itemlist>-ItemText IS NOT INITIAL.
+        zcl_items_util_anthropic=>get_reco_value_from_anthropic(
+          EXPORTING iv_itemtext = CONV #( <itemlist>-ItemText )
+          IMPORTING ev_notes    = DATA(lv_response) ).
+        <itemlist>-Notes = lv_response.
+      ENDIF.
+    ENDLOOP.
+
+    " Fix vs. video: use the FOR variable, not the field symbol
+    " (the field symbol only points to the LAST row after the loop)
+    MODIFY ENTITIES OF zr_item_list IN LOCAL MODE
+      ENTITY ZrItemList
+        UPDATE FIELDS ( Notes )
+        WITH VALUE #( FOR itemlist IN itemlists
+                      ( %tky  = itemlist-%tky
+                        Notes = itemlist-Notes ) ).
+  ENDMETHOD.
+
+
+
+
+
+"=====================================================================
+" 5. UTILITY CLASS - DIRECT ANTHROPIC API (generative product review)
+"    No ISLM scenario / no Gen AI Hub - plain HTTPS call with API key
+"    Endpoint : https://api.anthropic.com/v1/messages
+"=====================================================================
+CLASS zcl_items_util_anthropic DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES if_oo_adt_classrun.
+
+    CLASS-METHODS get_reco_value_from_anthropic
+      IMPORTING iv_itemtext TYPE string
+      EXPORTING ev_notes    TYPE string.
+
+    CLASS-METHODS get_prompt_payload
+      IMPORTING iv_itemtext     TYPE string
+      RETURNING VALUE(rv_value) TYPE string.
+
+  PRIVATE SECTION.
+    CONSTANTS:
+      c_url         TYPE string VALUE 'https://api.anthropic.com/v1/messages',
+      c_api_key     TYPE string VALUE '*****',   " <-- put your key here
+      c_api_version TYPE string VALUE '2023-06-01',               " required header
+      c_model       TYPE string VALUE 'claude-haiku-5-5'.         " or 'claude-sonnet-5-5'
+
+    " Response structure (only the parts we need)
+    TYPES:
+      BEGIN OF ty_content,
+        type TYPE string,
+        text TYPE string,
+      END OF ty_content,
+      tt_content TYPE STANDARD TABLE OF ty_content WITH EMPTY KEY,
+
+      BEGIN OF ty_error,
+        type    TYPE string,
+        message TYPE string,
+      END OF ty_error,
+
+      BEGIN OF ty_response,
+        content     TYPE tt_content,
+        stop_reason TYPE string,
+        error       TYPE ty_error,
+      END OF ty_response.
+ENDCLASS.
+
+
+CLASS zcl_items_util_anthropic IMPLEMENTATION.
+
+    METHOD if_oo_adt_classrun~main.
+
+    DATA: lv_notes TYPE string.
+
+    " Sample items to review
+    DATA(lt_items) = VALUE string_table(
+      ( `Samsung Galaxy S24 Ultra 256GB Titanium Gray` ) ).
+
+    LOOP AT lt_items INTO DATA(lv_item).
+
+      out->write( |==================================================| ).
+      out->write( |Item: { lv_item }| ).
+      out->write( |--------------------------------------------------| ).
+
+      " Optional: print the JSON payload being sent
+      out->write( |Payload:| ).
+      out->write( zcl_items_util_anthropic=>get_prompt_payload( lv_item ) ).
+      out->write( |--------------------------------------------------| ).
+
+      " Call Anthropic API
+      zcl_items_util_anthropic=>get_reco_value_from_anthropic(
+        EXPORTING iv_itemtext = lv_item
+        IMPORTING ev_notes    = lv_notes ).
+
+      IF lv_notes IS INITIAL.
+        out->write( |No response received.| ).
+      ELSE.
+        out->write( |Claude response:| ).
+        out->write( lv_notes ).
+      ENDIF.
+
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD get_prompt_payload.
+    CHECK iv_itemtext IS NOT INITIAL.
+
+    " Escape quotes/backslashes so the item text can't break the JSON
+    DATA(lv_item) = escape( val = iv_itemtext format = cl_abap_format=>e_json_string ).
+
+    " Differences vs. OpenAI format:
+    "  - 'system' is a top-level field, not a message
+    "  - 'max_tokens' is mandatory
+    "  - roles must alternate user/assistant, so the few-shot example
+    "    is a user question + assistant answer pair
+    CONCATENATE
+      '{"model": "' c_model '",'                                                     cl_abap_char_utilities=>cr_lf
+      '"max_tokens": 500,'                                                          cl_abap_char_utilities=>cr_lf
+      '"system": "You are an IT Product Review assistant based on description.",'    cl_abap_char_utilities=>cr_lf
+      '"messages": ['                                                                cl_abap_char_utilities=>cr_lf
+      '  {"role": "user", "content": "Example 1: Analyze: `iPhone 16 Plus 128GB Black`."},' cl_abap_char_utilities=>cr_lf
+      '  {"role": "assistant", "content": "Apple."},'                                cl_abap_char_utilities=>cr_lf
+      '  {"role": "user", "content": "Analyze the type of the product and highlight 3 to 4 specific feature phrases and display in bullet points: '
+      lv_item
+      '."}'                                                                          cl_abap_char_utilities=>cr_lf
+      ']}'
+      INTO rv_value RESPECTING BLANKS.
+  ENDMETHOD.
+
+
+  METHOD get_reco_value_from_anthropic.
+
+    DATA: lv_payload TYPE string,
+          lv_body    TYPE string,
+          ls_status  TYPE if_web_http_response=>http_status,
+          ls_resp    TYPE ty_response.
+
+    CLEAR ev_notes.
+    lv_payload = get_prompt_payload( iv_itemtext ).
+    CHECK lv_payload IS NOT INITIAL.
+
+    " ---- 1. HTTP call ------------------------------------------------
+    TRY.
+        DATA(lo_dest)   = cl_http_destination_provider=>create_by_url( c_url ).
+        DATA(lo_client) = cl_web_http_client_manager=>create_by_http_destination( lo_dest ).
+
+        DATA(lo_req) = lo_client->get_http_request( ).
+        lo_req->set_header_fields( VALUE #(
+          ( name = 'Content-Type'      value = 'application/json' )
+          ( name = 'x-api-key'         value = c_api_key )
+          ( name = 'anthropic-version' value = c_api_version ) ) ).
+        lo_req->set_text( lv_payload ).
+
+        DATA(lo_http_resp) = lo_client->execute( if_web_http_client=>post ).
+        ls_status = lo_http_resp->get_status( ).
+        lv_body   = lo_http_resp->get_text( ).
+        lo_client->close( ).
+
+      CATCH cx_http_dest_provider_error cx_web_http_client_error INTO DATA(lx_http).
+        ev_notes = lx_http->get_text( ).          " surface the error in Notes
+        RETURN.
+    ENDTRY.
+
+    " ---- 2. Parse JSON -----------------------------------------------
+    /ui2/cl_json=>deserialize( EXPORTING json = lv_body
+                               CHANGING  data = ls_resp ).
+
+    IF ls_status-code <> 200.
+      ev_notes = |Anthropic API error { ls_status-code }: { ls_resp-error-message }|.
+      RETURN.
+    ENDIF.
+
+    " ---- 3. Collect text blocks from content[] -----------------------
+    LOOP AT ls_resp-content INTO DATA(ls_block) WHERE type = 'text'.
+      ev_notes = ev_notes && ls_block-text.
+    ENDLOOP.
+  ENDMETHOD.
+
+ENDCLASS.
