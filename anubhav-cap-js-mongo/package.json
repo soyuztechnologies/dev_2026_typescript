@@ -44,7 +44,8 @@
   },
   "scripts": {
     "test": "node --test --test-concurrency=1 --test-timeout=600000 \"test/*.test.mjs\"",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm test",
+    "link:sample": "node -e \"const fs=require('fs'),l='samples/bookshop/node_modules/@anubhav-cap-js/mongo';fs.mkdirSync(require('path').dirname(l),{recursive:true});try{fs.unlinkSync(l)}catch{}fs.symlinkSync(process.cwd(),l,'junction');console.log('linked',l)\""
   },
   "dependencies": {
     "@cap-js/db-service": "^3",

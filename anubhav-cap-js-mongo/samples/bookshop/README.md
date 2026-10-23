@@ -41,8 +41,9 @@ samples/bookshop
    node -e "require('fs').writeFileSync('.gitignore','node_modules/\ngen/\nmta_archives/\n.cdsrc-private.json\n')"
    ```
 
-   > Working inside the source of the plugin (or before it is published)? Run `npm install ../..` in
-   > `samples/bookshop` to use the local copy.
+   > Working inside the source of the plugin (git clone)? Don't run `npm install` in `samples/bookshop`.
+   > Run `npm install` and `npm run link:sample` in the plugin root instead. That links the local plugin
+   > into the sample, which uses `@sap/cds` from the plugin root (one single CAP instance).
 
 3. Provide the connection – copy `.cdsrc-private.example.json` to **`.cdsrc-private.json`** and fill in
    your cluster host, user and password:

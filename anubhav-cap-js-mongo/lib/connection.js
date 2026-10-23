@@ -1,3 +1,4 @@
+const dns = require('dns')
 const fs = require('fs')
 const path = require('path')
 const cds = require('@sap/cds')
@@ -122,7 +123,14 @@ function _connection({ source, url, user, password, database, authSource, option
   }
   if (user) clientOptions.auth = { username: user, password }
   if (authSource) clientOptions.authSource = authSource
-  return { source, url, database, clientOptions, display: `${maskUrl(url).replace(/\?.*$/, '')} (database: ${database})` }
+  return {
+    source,
+    url,
+    database,
+    clientOptions,
+    dnsServers: options.dnsServers,
+    display: `${maskUrl(url).replace(/\?.*$/, '')} (database: ${database})`
+  }
 }
 
 /** True for plain mongodb:// connections to remote hosts without TLS */
@@ -173,13 +181,14 @@ async function acquireClient(conn) {
   const key = JSON.stringify([conn.url, conn.clientOptions])
   let entry = clients.get(key)
   if (!entry) {
-    const client = new MongoClient(conn.url, conn.clientOptions)
-    entry = { key, refs: 0, client, ready: null }
-    entry.ready = client.connect().catch(async e => {
-      clients.delete(key)
-      await client.close().catch(() => {}) // stop the topology monitors, otherwise the process does not exit
-      throw translate(e, { url: conn.url })
-    })
+    entry = { key, refs: 0, client: null, ready: null }
+    entry.ready = _connect(conn).then(
+      client => (entry.client = client),
+      e => {
+        clients.delete(key)
+        throw translate(e, { url: conn.url })
+      }
+    )
     clients.set(key, entry)
   }
   entry.refs++
@@ -195,7 +204,72 @@ async function acquireClient(conn) {
 async function releaseClient(entry) {
   if (!entry || --entry.refs > 0) return
   clients.delete(entry.key)
-  await entry.client.close().catch(e => LOG.debug?.('Error closing MongoClient', e))
+  await entry.client?.close().catch(e => LOG.debug?.('Error closing MongoClient', e))
 }
 
-module.exports = { resolveConnection, acquireClient, releaseClient, projectDatabaseName, DEFAULT_DATABASE }
+async function _connect(conn) {
+  try {
+    return await _connectTo(conn.url, conn.clientOptions)
+  } catch (e) {
+    if (!_isSrvLookupFailure(e, conn.url)) throw e
+    const servers = conn.dnsServers?.length ? conn.dnsServers : PUBLIC_DNS
+    let url
+    try {
+      url = await _resolveSrvUrl(conn.url, servers)
+    } catch (e2) {
+      LOG.debug?.(`DNS SRV lookup via ${servers} failed as well`, e2)
+      throw e
+    }
+    LOG.warn(
+      `DNS SRV lookup of ${maskUrl(conn.url).replace(/\?.*$/, '')} failed with the DNS server of Node.js (${dns.getServers()}): ${e.code} ` +
+        `- resolved it via ${servers} instead. Set option "dnsServers" or use the standard connection string (mongodb://) of your cluster to avoid this warning`
+    )
+    return _connectTo(url, conn.clientOptions)
+  }
+}
+
+async function _connectTo(url, options) {
+  const client = new MongoClient(url, options)
+  try {
+    return await client.connect()
+  } catch (e) {
+    await client.close().catch(() => {}) // stop the topology monitors, otherwise the process does not exit
+    throw e
+  }
+}
+
+/**
+ * mongodb+srv:// needs a DNS SRV lookup. Node.js on Windows sometimes uses an unreachable DNS server
+ * (e.g. 127.0.0.1) for it, while the OS resolves the host fine -> querySrv ECONNREFUSED / ETIMEOUT.
+ * A wrong cluster host (ENOTFOUND / ENODATA) is not retried.
+ */
+const PUBLIC_DNS = ['8.8.8.8', '1.1.1.1']
+const SRV_RETRY_CODES = new Set(['ECONNREFUSED', 'ETIMEOUT', 'ETIMEDOUT', 'ECONNRESET', 'EREFUSED', 'ESERVFAIL'])
+const _isSrvLookupFailure = (e, url) => {
+  if (!/^mongodb\+srv:/i.test(url)) return false
+  const err = [e, e?.cause].find(x => x && (x.syscall === 'querySrv' || /querySrv/.test(x.message)))
+  return !!err && SRV_RETRY_CODES.has(err.code)
+}
+
+/** Resolves a mongodb+srv:// URL to the equivalent mongodb:// seed list URL, like the MongoDB driver does */
+async function _resolveSrvUrl(url, servers) {
+  const m = /^mongodb\+srv:\/\/([^@/]*@)?([^/?,:]+)(\/[^?]*)?(\?.*)?$/i.exec(url)
+  if (!m) throw new Error('Invalid mongodb+srv:// URL')
+  const [, auth = '', host, db = '/', query = ''] = m
+  const domain = host.split('.').slice(1).join('.')
+  if (host.split('.').length < 3) throw new Error(`mongodb+srv:// host "${host}" needs at least 3 parts`)
+  const resolver = new dns.promises.Resolver({ timeout: 5000, tries: 2 })
+  resolver.setServers(servers)
+  const [srv, txt] = await Promise.all([resolver.resolveSrv(`_mongodb._tcp.${host}`), resolver.resolveTxt(host).catch(() => [])])
+  // SECURITY: like the driver, only accept hosts of the same domain as the cluster
+  const hosts = srv.map(r => r.name.replace(/\.$/, ''))
+  if (!hosts.length || hosts.some(h => !h.toLowerCase().endsWith(`.${domain.toLowerCase()}`)))
+    throw new Error(`DNS SRV records of ${host} point to hosts outside of ${domain}`)
+  const params = new URLSearchParams(txt.map(t => t.join('')).join('&'))
+  for (const k of [...params.keys()]) if (!['authSource', 'replicaSet', 'loadBalanced'].includes(k)) params.delete(k)
+  for (const [k, v] of new URLSearchParams(query.slice(1))) params.set(k, v) // options of the URL win
+  if (!params.has('tls') && !params.has('ssl')) params.set('tls', 'true') // mongodb+srv:// implies TLS
+  return `mongodb://${auth}${srv.map(r => `${r.name.replace(/\.$/, '')}:${r.port}`).join(',')}${db}?${params}`
+}
+
+module.exports = { resolveConnection, acquireClient, releaseClient, projectDatabaseName, DEFAULT_DATABASE, _srv: { isSrvLookupFailure: _isSrvLookupFailure, resolveSrvUrl: _resolveSrvUrl } }

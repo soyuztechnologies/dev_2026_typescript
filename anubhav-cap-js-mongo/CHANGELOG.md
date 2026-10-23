@@ -23,6 +23,8 @@ This project follows [Semantic Versioning](https://semver.org).
   results as `@cap-js/sqlite`.
 - Sample application `samples/bookshop` (Fiori drafts, analytics service, SAP BTP deployment).
 - Option `maxTimeMS` to limit the run time of queries.
+- `mongodb+srv://` URLs work when the DNS server of Node.js can't be reached (e.g. 127.0.0.1 on Windows): the cluster
+  is then resolved via public DNS servers, configurable with option `dnsServers`.
 - Option `dbName` for the database name; defaults to the project name from package.json.
 - Option `autoDeploy` (`true` | `false` | `"schema"`) to deploy the model on boot; string values from
   environment variables are parsed (`"false"` switches it off), invalid values fail the boot.

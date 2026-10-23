@@ -216,3 +216,54 @@ describe('error translation', () => {
     assert.match(auth.message, /Database Access/)
   })
 })
+
+describe('mongodb+srv:// when the DNS server of Node.js fails', () => {
+  const { _srv } = require('../lib/connection')
+  const dns = require('dns')
+  const srvError = code => Object.assign(new Error(`querySrv ${code} _mongodb._tcp.cluster0.abc.mongodb.net`), { code, syscall: 'querySrv' })
+
+  test('only unreachable DNS servers are retried, not wrong hosts', () => {
+    const url = 'mongodb+srv://cluster0.abc.mongodb.net'
+    assert.equal(_srv.isSrvLookupFailure(srvError('ECONNREFUSED'), url), true)
+    assert.equal(_srv.isSrvLookupFailure(srvError('ETIMEOUT'), url), true)
+    assert.equal(_srv.isSrvLookupFailure({ cause: srvError('ECONNREFUSED') }, url), true)
+    assert.equal(_srv.isSrvLookupFailure(srvError('ENOTFOUND'), url), false)
+    assert.equal(_srv.isSrvLookupFailure(srvError('ECONNREFUSED'), 'mongodb://localhost:27017'), false)
+    assert.equal(_srv.isSrvLookupFailure(new Error('Authentication failed.'), url), false)
+  })
+
+  const { resolveSrv, resolveTxt, setServers } = dns.promises.Resolver.prototype
+  const mock = (srv, txt) => {
+    let servers
+    Object.assign(dns.promises.Resolver.prototype, {
+      setServers: s => (servers = s),
+      resolveSrv: async () => srv,
+      resolveTxt: async () => txt
+    })
+    return () => servers
+  }
+  const restore = () => Object.assign(dns.promises.Resolver.prototype, { resolveSrv, resolveTxt, setServers })
+
+  test('resolves to a mongodb:// seed list with TLS and the TXT options', async t => {
+    t.after(restore)
+    const servers = mock(
+      [{ name: 'shard-00-00.abc.mongodb.net', port: 27017 }, { name: 'shard-00-01.abc.mongodb.net.', port: 27017 }],
+      [['authSource=admin&replicaSet=atlas-1-shard-0&evil=1']]
+    )
+    const url = await _srv.resolveSrvUrl('mongodb+srv://u:p%40ss@cluster0.abc.mongodb.net/shop?retryWrites=true&authSource=other', ['9.9.9.9'])
+    assert.deepEqual(servers(), ['9.9.9.9'])
+    const u = { searchParams: new URLSearchParams(url.split("?")[1]) }
+    assert.equal(url.split('?')[0], 'mongodb://u:p%40ss@shard-00-00.abc.mongodb.net:27017,shard-00-01.abc.mongodb.net:27017/shop')
+    assert.equal(u.searchParams.get('tls'), 'true')
+    assert.equal(u.searchParams.get('replicaSet'), 'atlas-1-shard-0')
+    assert.equal(u.searchParams.get('authSource'), 'other') // options of the URL win
+    assert.equal(u.searchParams.get('retryWrites'), 'true')
+    assert.equal(u.searchParams.has('evil'), false) // TXT records may only set authSource, replicaSet, loadBalanced
+  })
+
+  test('rejects SRV records pointing to other domains', async t => {
+    t.after(restore)
+    mock([{ name: 'attacker.example.com', port: 27017 }], [])
+    await assert.rejects(_srv.resolveSrvUrl('mongodb+srv://cluster0.abc.mongodb.net', ['9.9.9.9']), /outside of abc\.mongodb\.net/)
+  })
+})

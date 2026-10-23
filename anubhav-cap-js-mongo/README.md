@@ -257,6 +257,7 @@ All options are set in `cds.requires["anubhav-mongo"]`:
 | `pool` | `{ "max": 100 }` | CAP connection pool options |
 | `maxTimeMS` | – | Server-side time limit for each query in milliseconds, e.g. `30000` – protects against expensive client queries (error `MONGO_TIMEOUT`, HTTP 504) |
 | `destinationCache` | `true` | Cache destinations (SAP Cloud SDK) |
+| `dnsServers` | `["8.8.8.8", "1.1.1.1"]` | DNS servers for resolving `mongodb+srv://` hosts when the DNS server of Node.js can't be reached (see [Troubleshooting](#troubleshooting)) |
 
 Entity annotations:
 
@@ -432,7 +433,9 @@ Errors have an HTTP `status`, a `code` and a message with a hint. The original d
 | Symptom | Solution |
 | --- | --- |
 | `MONGO_CONNECTION_FAILED ... querySrv ENOTFOUND` | wrong cluster host in `url` or destination `URL` |
-| `MONGO_CONNECTION_FAILED ... querySrv ECONNREFUSED` | the DNS server used by Node.js refuses SRV lookups (seen on some Windows / VPN setups) – use the standard connection string from Atlas (*Connect → Drivers*, older driver version) with `mongodb://` and all hosts |
+| `[mongo] - DNS SRV lookup ... failed with the DNS server of Node.js (127.0.0.1): ECONNREFUSED` (warning) | Node.js on Windows sometimes uses an unreachable DNS server for `mongodb+srv://` lookups. The plugin then resolves the cluster via public DNS (`dnsServers`) and connects anyway. To avoid the warning, set `dnsServers` to a DNS server of your network, or use the standard connection string from Atlas (*Connect → Drivers*, older driver version) with `mongodb://` and all hosts |
+| `MONGO_CONNECTION_FAILED ... querySrv ECONNREFUSED` | the SRV lookup failed with the public DNS servers as well (outbound DNS blocked, e.g. in corporate networks) – set `dnsServers` to a DNS server of your network or use the standard `mongodb://` connection string |
+| Every request fails with `No database connection` and the log shows no `[mongo] - connected` line | the plugin is not installed in the app – run `npm add @anubhav-cap-js/mongo` |
 | `MONGO_CONNECTION_FAILED` only on BTP | add the BTP egress IPs to Atlas *Network Access* |
 | `MONGO_AUTHENTICATION_FAILED` | check user and password in Atlas *Database Access*; `authSource` for self-hosted servers |
 | `MONGO_DESTINATION_FAILED ... no destination service instance is bound` | bind a destination service (`mta.yaml`, `cf bind-service`) |
