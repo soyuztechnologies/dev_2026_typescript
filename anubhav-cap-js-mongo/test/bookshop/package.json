@@ -1,0 +1,32 @@
+{
+  "name": "bookshop-mongo-test",
+  "private": true,
+  "description": "Test application for @anubhav-cap-js/mongo",
+  "dependencies": {
+    "@anubhav-cap-js/mongo": "*"
+  },
+  "cds": {
+    "requires": {
+      "anubhav-mongo": {
+        "dbName": "bookshop_test",
+        "autoDeploy": true
+      },
+      "auth": {
+        "kind": "mocked",
+        "users": {
+          "alice": {
+            "roles": [
+              "admin"
+            ]
+          },
+          "bob": {},
+          "carol": {
+            "attr": {
+              "city": "Haworth"
+            }
+          }
+        }
+      }
+    }
+  }
+}

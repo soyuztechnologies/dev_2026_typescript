@@ -25,3 +25,6 @@ ai_work
 **/npm-debug.log
 **/yarn-error.log
     
+# CAP private configuration with credentials (passwords, connection strings) - never commit
+**/.cdsrc-private.json
+**/default-env.json

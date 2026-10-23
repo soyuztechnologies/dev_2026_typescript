@@ -1,0 +1,53 @@
+### Try these requests with the VS Code "REST Client" extension while `cds watch` is running
+@server = http://localhost:4004
+
+### Browse books (author.name is resolved with $lookup)
+GET {{server}}/browse/Books?$select=ID,title,author,price&$orderby=price desc&$top=3
+
+### Filter, search and count
+GET {{server}}/browse/Books?$filter=stock gt 100 and contains(title,'e')&$count=true
+
+### Localized texts (German)
+GET {{server}}/browse/Books(201)?$select=title,descr
+Accept-Language: de
+
+### Order a book (reduces stock)
+POST {{server}}/browse/submitOrder
+Authorization: Basic bob:
+Content-Type: application/json
+
+{ "book": 201, "quantity": 2 }
+
+### Expand authors with their books
+GET {{server}}/admin/Authors?$expand=books($select=title,stock;$orderby=title)
+Authorization: Basic alice:
+
+### Analytics: OData $apply - stock per author
+GET {{server}}/analytics/Books?$apply=groupby((author_ID),aggregate(stock with sum as totalStock))&$orderby=totalStock desc
+Authorization: Basic alice:
+
+### Analytics: OData $apply - filter, aggregate, top
+GET {{server}}/analytics/Books?$apply=filter(price gt 12)/groupby((currency_code),aggregate(price with average as avgPrice,$count as books))/orderby(books desc)/top(2)
+Authorization: Basic alice:
+
+### Analytics: custom function with CQL groupBy over a path
+GET {{server}}/analytics/stockByGenre()
+Authorization: Basic alice:
+
+### Analytics: having, orderBy, top/skip
+GET {{server}}/analytics/topAuthors(minBooks=1,top=2,skip=0)
+Authorization: Basic alice:
+
+### Create a draft (Fiori) ...
+POST {{server}}/admin/Books
+Authorization: Basic alice:
+Content-Type: application/json
+
+{ "ID": 999, "title": "My first MongoDB book", "author_ID": 101, "stock": 10, "price": "9.99" }
+
+### ... and activate it
+POST {{server}}/admin/Books(ID=999,IsActiveEntity=false)/AdminService.draftActivate
+Authorization: Basic alice:
+Content-Type: application/json
+
+{}

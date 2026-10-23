@@ -1,0 +1,104 @@
+{
+  "name": "@anubhav-cap-js/mongo",
+  "version": "1.0.0",
+  "description": "CDS database service for MongoDB and MongoDB Atlas - use MongoDB as the persistence of SAP CAP (Node.js) applications, with hardcoded credentials or SAP BTP destinations.",
+  "homepage": "https://www.anubhavtrainings.com",
+  "keywords": [
+    "CAP",
+    "CDS",
+    "SAP",
+    "BTP",
+    "MongoDB",
+    "Atlas",
+    "cds-plugin",
+    "database",
+    "anubhav trainings"
+  ],
+  "author": "Anubhav Trainings (https://www.anubhavtrainings.com)",
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "bin": {
+    "anubhav-mongo": "bin/anubhav-mongo.js"
+  },
+  "files": [
+    "index.js",
+    "cds-plugin.js",
+    "lib",
+    "bin",
+    "samples",
+    "!samples/**/.cdsrc-private.json",
+    "!samples/**/default-env.json",
+    "!samples/**/.env",
+    "!samples/**/node_modules",
+    "!samples/**/gen",
+    "!samples/**/mta_archives",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 --test-timeout=600000 \"test/*.test.mjs\"",
+    "prepublishOnly": "npm test"
+  },
+  "dependencies": {
+    "@cap-js/db-service": "^3",
+    "mongodb": "^6.10.0 || ^7"
+  },
+  "peerDependencies": {
+    "@sap-cloud-sdk/connectivity": ">=3",
+    "@sap/cds": "^10"
+  },
+  "peerDependenciesMeta": {
+    "@sap-cloud-sdk/connectivity": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@cap-js/cds-test": "^1.0.2",
+    "@sap/cds": "^10",
+    "express": "^4 || ^5",
+    "mongodb-memory-server": "^10"
+  },
+  "cds": {
+    "requires": {
+      "kinds": {
+        "anubhav-mongo": {
+          "kind": "anubhav-mongo",
+          "impl": "@anubhav-cap-js/mongo",
+          "dialect": "sqlite",
+          "transactions": "auto",
+          "autoDeploy": true,
+          "vcap": {
+            "tag": "mongodb"
+          },
+          "pool": {
+            "min": 0,
+            "max": 100,
+            "acquireTimeoutMillis": 10000,
+            "idleTimeoutMillis": 60000,
+            "evictionRunIntervalMillis": 100000
+          },
+          "[development]": {
+            "data": [
+              "db/data",
+              "db/csv",
+              "test/data"
+            ]
+          },
+          "[production]": {
+            "data": [
+              "db/data",
+              "db/csv"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

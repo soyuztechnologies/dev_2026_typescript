@@ -1,0 +1,9 @@
+node_modules/
+*.tgz
+test/bookshop/_out/
+!bin/
+
+# CAP private configuration with credentials - never commit
+**/.cdsrc-private.json
+**/default-env.json
+**/.env

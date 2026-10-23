@@ -1,0 +1,6 @@
+ID;title;descr;author_ID;stock;price;currency_code;genre_ID;isbn
+201;Wuthering Heights;"Wuthering Heights, Emily Brontë's only novel, was published in 1847 under the pseudonym ""Ellis Bell"".";101;12;11.11;GBP;11;978-0141439556
+207;Jane Eyre;"Jane Eyre is a novel by English writer Charlotte Brontë.";107;11;12.34;GBP;11;978-0141441146
+251;The Raven;"The Raven is a narrative poem by American writer Edgar Allen Poe.";150;333;13.13;USD;16;978-1503275539
+252;Eleonora;"Eleonora is a short story by Edgar Allan Poe, first published in 1842.";150;555;14;USD;16;978-1530520770
+271;Catweazle;"Catweazle is a British fantasy television series.";170;22;150;JPY;13;

@@ -1,0 +1,6 @@
+{
+  "name": "analytics-mongo-test",
+  "private": true,
+  "dependencies": { "@anubhav-cap-js/mongo": "*" },
+  "cds": { "requires": { "anubhav-mongo": { "database": "analytics_test" } } }
+}

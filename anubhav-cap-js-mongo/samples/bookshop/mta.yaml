@@ -1,0 +1,52 @@
+_schema-version: '3.1'
+ID: mongo-bookshop
+version: 1.0.0
+description: SAP CAP bookshop on MongoDB Atlas (@anubhav-cap-js/mongo) - www.anubhavtrainings.com
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+        # initial data for autoDeploy (empty collections are filled at the first start on BTP)
+        - node -e "require('fs').cpSync('db/data','gen/srv/db/data',{recursive:true})"
+
+modules:
+  # CAP service - connects to MongoDB Atlas through the destination MONGO_ATLAS
+  - name: mongo-bookshop-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+      readiness-health-check-type: http
+      readiness-health-check-http-endpoint: /health
+    build-parameters:
+      builder: npm
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: mongo-bookshop-destination
+      - name: mongo-bookshop-auth
+
+resources:
+  # holds the MONGO_ATLAS destination (create it in the BTP cockpit, see README)
+  - name: mongo-bookshop-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+
+  - name: mongo-bookshop-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: mongo-bookshop-${org}-${space}
+        tenant-mode: dedicated

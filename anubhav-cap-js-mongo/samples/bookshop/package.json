@@ -1,0 +1,50 @@
+{
+  "name": "mongo-bookshop-sample",
+  "version": "1.0.0",
+  "description": "Sample SAP CAP application using MongoDB Atlas via @anubhav-cap-js/mongo - by www.anubhavtrainings.com",
+  "private": true,
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@anubhav-cap-js/mongo": "^1.0.0",
+    "@sap/cds": "^10",
+    "@sap/xssec": "^4",
+    "express": "^4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch": "cds watch",
+    "ping": "anubhav-mongo ping",
+    "deploy:db": "anubhav-mongo deploy",
+    "reset:db": "anubhav-mongo deploy --drop"
+  },
+  "cds": {
+    "requires": {
+      "anubhav-mongo": {
+        "dbName": "anubhav",
+        "autoDeploy": true,
+        "[production]": {
+          "destination": "MONGO_ATLAS"
+        }
+      },
+      "[development]": {
+        "auth": {
+          "kind": "mocked",
+          "users": {
+            "alice": {
+              "roles": [
+                "admin"
+              ]
+            },
+            "bob": {}
+          }
+        }
+      },
+      "[production]": {
+        "auth": "xsuaa"
+      }
+    }
+  }
+}

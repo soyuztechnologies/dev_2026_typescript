@@ -1,0 +1,899 @@
+{
+ "engine": "sqlite",
+ "cql": {
+  "orderBy multiple columns asc/desc": {
+   "result": [
+    {
+     "ID": 25,
+     "region": "AMER",
+     "amount": "15299.83"
+    },
+    {
+     "ID": 21,
+     "region": "AMER",
+     "amount": "11699.87"
+    },
+    {
+     "ID": 70,
+     "region": "AMER",
+     "amount": "11699.87"
+    },
+    {
+     "ID": 13,
+     "region": "AMER",
+     "amount": "8099.91"
+    },
+    {
+     "ID": 63,
+     "region": "AMER",
+     "amount": "8099.91"
+    },
+    {
+     "ID": 20,
+     "region": "AMER",
+     "amount": "5100.00"
+    },
+    {
+     "ID": 43,
+     "region": "AMER",
+     "amount": "5100.00"
+    },
+    {
+     "ID": 103,
+     "region": "AMER",
+     "amount": "5100.00"
+    }
+   ]
+  },
+  "limit with offset (top 5 skip 10)": {
+   "result": [
+    {
+     "ID": 11
+    },
+    {
+     "ID": 12
+    },
+    {
+     "ID": 13
+    },
+    {
+     "ID": 14
+    },
+    {
+     "ID": 15
+    }
+   ]
+  },
+  "orderBy expression": {
+   "result": [
+    {
+     "ID": 6,
+     "quantity": 1,
+     "amount": "149.00"
+    },
+    {
+     "ID": 10,
+     "quantity": 1,
+     "amount": "149.00"
+    },
+    {
+     "ID": 12,
+     "quantity": 1,
+     "amount": "149.00"
+    },
+    {
+     "ID": 17,
+     "quantity": 1,
+     "amount": "300.00"
+    },
+    {
+     "ID": 26,
+     "quantity": 1,
+     "amount": "149.00"
+    }
+   ]
+  },
+  "orderBy alias of calculated column": {
+   "result": [
+    {
+     "ID": 1,
+     "unit": 899.99
+    },
+    {
+     "ID": 2,
+     "unit": 899.99
+    },
+    {
+     "ID": 8,
+     "unit": 899.99
+    },
+    {
+     "ID": 13,
+     "unit": 899.99
+    },
+    {
+     "ID": 16,
+     "unit": 899.99
+    }
+   ]
+  },
+  "orderBy to-one path (product.name)": {
+   "result": [
+    {
+     "ID": 1,
+     "productName": "Laptop"
+    },
+    {
+     "ID": 2,
+     "productName": "Laptop"
+    },
+    {
+     "ID": 8,
+     "productName": "Laptop"
+    },
+    {
+     "ID": 13,
+     "productName": "Laptop"
+    },
+    {
+     "ID": 16,
+     "productName": "Laptop"
+    },
+    {
+     "ID": 21,
+     "productName": "Laptop"
+    }
+   ]
+  },
+  "orderBy nullable column": {
+   "result": [
+    {
+     "ID": 11,
+     "channel": null
+    },
+    {
+     "ID": 22,
+     "channel": null
+    },
+    {
+     "ID": 2,
+     "channel": "Online"
+    },
+    {
+     "ID": 6,
+     "channel": "Online"
+    },
+    {
+     "ID": 9,
+     "channel": "Online"
+    },
+    {
+     "ID": 10,
+     "channel": "Online"
+    },
+    {
+     "ID": 14,
+     "channel": "Online"
+    },
+    {
+     "ID": 15,
+     "channel": "Online"
+    },
+    {
+     "ID": 16,
+     "channel": "Online"
+    },
+    {
+     "ID": 20,
+     "channel": "Online"
+    },
+    {
+     "ID": 24,
+     "channel": "Online"
+    },
+    {
+     "ID": 25,
+     "channel": "Online"
+    },
+    {
+     "ID": 1,
+     "channel": "Partner"
+    },
+    {
+     "ID": 3,
+     "channel": "Partner"
+    },
+    {
+     "ID": 7,
+     "channel": "Partner"
+    },
+    {
+     "ID": 13,
+     "channel": "Partner"
+    },
+    {
+     "ID": 18,
+     "channel": "Partner"
+    },
+    {
+     "ID": 19,
+     "channel": "Partner"
+    },
+    {
+     "ID": 21,
+     "channel": "Partner"
+    },
+    {
+     "ID": 28,
+     "channel": "Partner"
+    },
+    {
+     "ID": 4,
+     "channel": "Retail"
+    },
+    {
+     "ID": 5,
+     "channel": "Retail"
+    },
+    {
+     "ID": 8,
+     "channel": "Retail"
+    },
+    {
+     "ID": 12,
+     "channel": "Retail"
+    },
+    {
+     "ID": 17,
+     "channel": "Retail"
+    },
+    {
+     "ID": 23,
+     "channel": "Retail"
+    },
+    {
+     "ID": 26,
+     "channel": "Retail"
+    },
+    {
+     "ID": 27,
+     "channel": "Retail"
+    },
+    {
+     "ID": 29,
+     "channel": "Retail"
+    }
+   ]
+  },
+  "count(*) on the whole table": {
+   "result": {
+    "n": 120
+   }
+  },
+  "sum / avg / min / max": {
+   "result": {
+    "total": 455001.88,
+    "avgQty": 8.46666666666667,
+    "lo": 149,
+    "hi": 15299.83
+   }
+  },
+  "aggregates with where": {
+   "result": {
+    "n": 16,
+    "qty": 144
+   }
+  },
+  "aggregates over empty set": {
+   "result": {
+    "n": 0,
+    "total": null,
+    "hi": null
+   }
+  },
+  "count(column) skips nulls": {
+   "result": {
+    "all": 120,
+    "withChannel": 110,
+    "withDiscount": 103
+   }
+  },
+  "countdistinct": {
+   "result": {
+    "countries": 5,
+    "products": 3
+   }
+  },
+  "min / max on dates and strings": {
+   "result": {
+    "first": "2023-01-01",
+    "last": "2025-09-25",
+    "c1": "DE",
+    "c2": "US"
+   }
+  },
+  "aggregate of an expression": {
+   "result": {
+    "dbl": 2032,
+    "avgAmount": 3791.68233333333
+   }
+  },
+  "groupBy one column": {
+   "result": [
+    {
+     "region": "AMER",
+     "n": 38,
+     "total": 139564.17
+    },
+    {
+     "region": "APJ",
+     "n": 38,
+     "total": 132384.2
+    },
+    {
+     "region": "EMEA",
+     "n": 44,
+     "total": 183053.51
+    }
+   ]
+  },
+  "groupBy two columns, orderBy aggregate desc": {
+   "result": [
+    {
+     "region": "EMEA",
+     "year": 2024,
+     "total": 83216.25
+    },
+    {
+     "region": "EMEA",
+     "year": 2023,
+     "total": 67918.4
+    },
+    {
+     "region": "APJ",
+     "year": 2023,
+     "total": 55336.67
+    },
+    {
+     "region": "AMER",
+     "year": 2024,
+     "total": 52618.59
+    },
+    {
+     "region": "AMER",
+     "year": 2025,
+     "total": 49330.72
+    },
+    {
+     "region": "APJ",
+     "year": 2025,
+     "total": 42416.72
+    },
+    {
+     "region": "AMER",
+     "year": 2023,
+     "total": 37614.86
+    },
+    {
+     "region": "APJ",
+     "year": 2024,
+     "total": 34630.81
+    },
+    {
+     "region": "EMEA",
+     "year": 2025,
+     "total": 31918.86
+    }
+   ]
+  },
+  "groupBy with having": {
+   "result": [
+    {
+     "country": "FR",
+     "n": 17
+    },
+    {
+     "country": "JP",
+     "n": 38
+    },
+    {
+     "country": "US",
+     "n": 38
+    }
+   ]
+  },
+  "having on aggregate not in columns": {
+   "result": [
+    {
+     "country": "JP"
+    },
+    {
+     "country": "US"
+    }
+   ]
+  },
+  "groupBy + top/skip of groups": {
+   "result": [
+    {
+     "country": "JP",
+     "qty": 314
+    },
+    {
+     "country": "FR",
+     "qty": 137
+    },
+    {
+     "country": "IN",
+     "qty": 126
+    }
+   ]
+  },
+  "groupBy + where + orderBy groupBy column desc": {
+   "result": [
+    {
+     "year": 2025,
+     "avgAmount": 3183.80117647059,
+     "maxQty": 17
+    },
+    {
+     "year": 2024,
+     "avgAmount": 4417.43,
+     "maxQty": 17
+    },
+    {
+     "year": 2023,
+     "avgAmount": 4231.48,
+     "maxQty": 17
+    }
+   ]
+  },
+  "groupBy foreign key": {
+   "result": [
+    {
+     "product_ID": 1,
+     "n": 40
+    },
+    {
+     "product_ID": 3,
+     "n": 33
+    },
+    {
+     "product_ID": 5,
+     "n": 47
+    }
+   ]
+  },
+  "groupBy to-one path (product.category)": {
+   "result": [
+    {
+     "category": "Hardware",
+     "total": 280796.88,
+     "n": 40
+    },
+    {
+     "category": "Service",
+     "total": 137700,
+     "n": 47
+    },
+    {
+     "category": "Software",
+     "total": 36505,
+     "n": 33
+    }
+   ]
+  },
+  "groupBy path, orderBy the grouped path and an aggregate, top/skip": {
+   "result": [
+    {
+     "productName": "Laptop",
+     "n": 40,
+     "qty": 312
+    },
+    {
+     "productName": "Office",
+     "n": 33,
+     "qty": 245
+    }
+   ]
+  },
+  "orderBy grouped column not in the column list": {
+   "result": [
+    {
+     "total": 123666.3
+    },
+    {
+     "total": 170465.65
+    },
+    {
+     "total": 160869.93
+    }
+   ]
+  },
+  "groupBy nullable column": {
+   "result": [
+    {
+     "channel": null,
+     "n": 10
+    },
+    {
+     "channel": "Online",
+     "n": 44
+    },
+    {
+     "channel": "Partner",
+     "n": 32
+    },
+    {
+     "channel": "Retail",
+     "n": 34
+    }
+   ]
+  },
+  "distinct": {
+   "result": [
+    {
+     "region": "AMER",
+     "year": 2023
+    },
+    {
+     "region": "AMER",
+     "year": 2024
+    },
+    {
+     "region": "AMER",
+     "year": 2025
+    },
+    {
+     "region": "APJ",
+     "year": 2023
+    },
+    {
+     "region": "APJ",
+     "year": 2024
+    },
+    {
+     "region": "APJ",
+     "year": 2025
+    },
+    {
+     "region": "EMEA",
+     "year": 2023
+    },
+    {
+     "region": "EMEA",
+     "year": 2024
+    },
+    {
+     "region": "EMEA",
+     "year": 2025
+    }
+   ]
+  },
+  "distinct + limit": {
+   "result": [
+    {
+     "country": "US"
+    },
+    {
+     "country": "JP"
+    },
+    {
+     "country": "IN"
+    }
+   ]
+  },
+  "where with in, between, like, path": {
+   "result": [
+    {
+     "ID": 57
+    },
+    {
+     "ID": 111
+    },
+    {
+     "ID": 117
+    }
+   ]
+  },
+  "where with or / not / null": {
+   "result": [
+    {
+     "ID": 7
+    },
+    {
+     "ID": 14
+    },
+    {
+     "ID": 21
+    },
+    {
+     "ID": 33
+    },
+    {
+     "ID": 42
+    },
+    {
+     "ID": 49
+    },
+    {
+     "ID": 55
+    },
+    {
+     "ID": 56
+    },
+    {
+     "ID": 63
+    },
+    {
+     "ID": 66
+    },
+    {
+     "ID": 70
+    },
+    {
+     "ID": 77
+    },
+    {
+     "ID": 88
+    },
+    {
+     "ID": 91
+    },
+    {
+     "ID": 98
+    },
+    {
+     "ID": 105
+    },
+    {
+     "ID": 110
+    }
+   ]
+  },
+  "count with $count and paging": {
+   "result": [
+    {
+     "ID": 13
+    },
+    {
+     "ID": 15
+    },
+    {
+     "ID": 16
+    },
+    {
+     "ID": 18
+    }
+   ],
+   "$count": 38
+  }
+ },
+ "odata": {
+  "$apply groupby + sum": {
+   "status": 200,
+   "body": {
+    "value": [
+     {
+      "total": 139564.17,
+      "region": "AMER"
+     },
+     {
+      "total": 132384.2,
+      "region": "APJ"
+     },
+     {
+      "total": 183053.51,
+      "region": "EMEA"
+     }
+    ]
+   }
+  },
+  "$apply groupby 2 + average, $orderby, $top": {
+   "status": 200,
+   "body": {
+    "value": [
+     {
+      "avg": 5201.015625,
+      "region": "EMEA",
+      "year": 2024
+     },
+     {
+      "avg": 4851.31428571429,
+      "region": "EMEA",
+      "year": 2023
+     },
+     {
+      "avg": 4256.66692307692,
+      "region": "APJ",
+      "year": 2023
+     }
+    ]
+   }
+  },
+  "$apply aggregate without groupby": {
+   "status": 200,
+   "body": {
+    "value": [
+     {
+      "total": 455001.88,
+      "maxQty": 17
+     }
+    ]
+   }
+  },
+  "$apply filter then groupby $count": {
+   "status": 200,
+   "body": {
+    "value": [
+     {
+      "n": 13,
+      "region": "AMER"
+     },
+     {
+      "n": 11,
+      "region": "APJ"
+     },
+     {
+      "n": 16,
+      "region": "EMEA"
+     }
+    ]
+   }
+  },
+  "$apply countdistinct": {
+   "status": 200,
+   "body": {
+    "value": [
+     {
+      "countries": 1,
+      "region": "AMER"
+     },
+     {
+      "countries": 1,
+      "region": "APJ"
+     },
+     {
+      "countries": 3,
+      "region": "EMEA"
+     }
+    ]
+   }
+  },
+  "$apply min/max + $skip": {
+   "status": 200,
+   "body": {
+    "value": [
+     {
+      "lo": 149,
+      "hi": 15299.83,
+      "country": "IN"
+     },
+     {
+      "lo": 149,
+      "hi": 15299.83,
+      "country": "JP"
+     },
+     {
+      "lo": 149,
+      "hi": 15299.83,
+      "country": "US"
+     }
+    ]
+   }
+  },
+  "$apply with $count=true": {
+   "status": 200,
+   "body": {
+    "@odata.count": 4,
+    "value": [
+     {
+      "qty": 82,
+      "channel": null
+     },
+     {
+      "qty": 384,
+      "channel": "Online"
+     },
+     {
+      "qty": 248,
+      "channel": "Partner"
+     },
+     {
+      "qty": 302,
+      "channel": "Retail"
+     }
+    ]
+   }
+  },
+  "$apply groupby navigation path": {
+   "status": 200,
+   "body": {
+    "value": [
+     {
+      "total": 280796.88,
+      "product": {
+       "category": "Hardware"
+      }
+     },
+     {
+      "total": 137700,
+      "product": {
+       "category": "Service"
+      }
+     },
+     {
+      "total": 36505,
+      "product": {
+       "category": "Software"
+      }
+     }
+    ]
+   }
+  },
+  "$apply groupby only": {
+   "status": 200,
+   "body": {
+    "value": [
+     {
+      "year": 2023
+     },
+     {
+      "year": 2024
+     },
+     {
+      "year": 2025
+     }
+    ]
+   }
+  },
+  "$apply orderby/top transformations": {
+   "status": 200,
+   "body": {
+    "@odata.nextLink": "Sales?%24apply=groupby((country)%2Caggregate(quantity%20with%20sum%20as%20qty))%2Forderby(qty%20desc)%2Ftop(2)&%24skiptoken=2",
+    "value": [
+     {
+      "qty": 342,
+      "country": "US"
+     },
+     {
+      "qty": 314,
+      "country": "JP"
+     }
+    ]
+   }
+  },
+  "$orderby, $top, $skip, $filter, $count (no $apply)": {
+   "status": 200,
+   "body": {
+    "@odata.count": 63,
+    "value": [
+     {
+      "ID": 55,
+      "amount": "11699.87",
+      "region": "EMEA"
+     },
+     {
+      "ID": 70,
+      "amount": "11699.87",
+      "region": "AMER"
+     },
+     {
+      "ID": 75,
+      "amount": "11699.87",
+      "region": "EMEA"
+     },
+     {
+      "ID": 84,
+      "amount": "11699.87",
+      "region": "EMEA"
+     },
+     {
+      "ID": 119,
+      "amount": "11699.87",
+      "region": "EMEA"
+     }
+    ]
+   }
+  }
+ }
+}

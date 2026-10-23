@@ -1,0 +1,24 @@
+{
+  "xsappname": "mongo-bookshop",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.admin",
+      "description": "Maintain books, authors and orders"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "admin",
+      "description": "Bookshop administrator",
+      "scope-references": ["$XSAPPNAME.admin"]
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "MongoBookshopAdmin",
+      "description": "Administrator of the MongoDB bookshop sample",
+      "role-template-references": ["$XSAPPNAME.admin"]
+    }
+  ]
+}
