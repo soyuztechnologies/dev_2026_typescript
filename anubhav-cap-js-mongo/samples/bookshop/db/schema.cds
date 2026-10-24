@@ -63,3 +63,14 @@ entity OrderItems : cuid {
   quantity : Integer;
   amount   : Decimal(11, 2);
 }
+
+/** Book sales per region and day (amounts in the sales currency) - source of the analytics app */
+entity Sales {
+  key ID       : Integer;
+      date     : Date;
+      region   : String(40);
+      book     : Association to Books;
+      quantity : Integer;
+      amount   : Decimal(11, 2);
+      currency : Currency;
+}

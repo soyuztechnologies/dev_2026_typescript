@@ -7,7 +7,7 @@ const cds = require('@sap/cds')
  */
 module.exports = class AnalyticsService extends cds.ApplicationService {
   init() {
-    const { Books } = cds.entities('anubhav.bookshop')
+    const { Books, Sales } = cds.entities('anubhav.bookshop')
 
     this.on('stockByGenre', () =>
       SELECT.from(Books)
@@ -31,6 +31,30 @@ module.exports = class AnalyticsService extends cds.ApplicationService {
         .orderBy('stock desc', 'author.name')
         .limit(top, skip)
     })
+
+    // sources of the charts in app/analyticapp
+    this.on('salesByRegion', () =>
+      SELECT.from(Sales)
+        .columns('region', 'sum(quantity) as quantity', 'sum(amount) as amount')
+        .groupBy('region')
+        .orderBy('amount desc')
+    )
+
+    this.on('salesByDay', () =>
+      SELECT.from(Sales)
+        .columns('date', 'sum(quantity) as quantity', 'sum(amount) as amount')
+        .groupBy('date')
+        .orderBy('date')
+    )
+
+    this.on('salesByBook', () =>
+      SELECT.from(Sales)
+        .columns('book.title as book', 'sum(quantity) as quantity', 'sum(amount) as amount')
+        .groupBy('book.title')
+        .orderBy('amount desc')
+    )
+
+    this.on('stockByBook', () => SELECT.from(Books).columns('title as book', 'stock').orderBy('stock desc'))
 
     return super.init()
   }

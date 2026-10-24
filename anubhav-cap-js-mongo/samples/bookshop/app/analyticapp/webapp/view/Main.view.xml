@@ -1,0 +1,109 @@
+<mvc:View controllerName="anubhav.analyticapp.controller.Main"
+  xmlns="sap.m"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:core="sap.ui.core"
+  xmlns:l="sap.ui.layout"
+  xmlns:viz="sap.viz.ui5.controls"
+  xmlns:viz.data="sap.viz.ui5.data"
+  xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+  core:require="{ Currency: 'sap/ui/model/type/Currency', Integer: 'sap/ui/model/type/Integer' }"
+  displayBlock="true">
+  <App id="app">
+    <Page id="page" title="{i18n>appTitle}">
+      <headerContent>
+        <ObjectStatus id="totalRevenue" title="{i18n>totalRevenue}" state="Information"
+          text="{ parts: ['charts>/totals/amount', 'charts>/totals/currency'], type: 'Currency' }"/>
+        <ObjectStatus id="totalUnits" title="{i18n>totalUnits}" state="Information" class="sapUiSmallMarginBegin"
+          text="{ path: 'charts>/totals/quantity', type: 'Integer' }"/>
+        <Button id="refresh" icon="sap-icon://refresh" tooltip="{i18n>refresh}" press=".onRefresh"/>
+      </headerContent>
+      <content>
+        <l:Grid id="charts" defaultSpan="XL6 L6 M12 S12" class="sapUiSmallMarginTop">
+
+          <!-- donut: total sales per region -->
+          <Panel id="regionPanel" headerText="{i18n>salesByRegion}">
+            <viz:VizFrame id="regionChart" vizType="donut" width="100%" height="22rem" uiConfig="{applicationSet: 'fiori'}">
+              <viz:dataset>
+                <viz.data:FlattenedDataset data="{charts>/regions}">
+                  <viz.data:dimensions>
+                    <viz.data:DimensionDefinition name="{i18n>region}" value="{charts>region}"/>
+                  </viz.data:dimensions>
+                  <viz.data:measures>
+                    <viz.data:MeasureDefinition name="{i18n>revenue}" value="{charts>amount}"/>
+                  </viz.data:measures>
+                </viz.data:FlattenedDataset>
+              </viz:dataset>
+              <viz:feeds>
+                <viz.feeds:FeedItem uid="size" type="Measure" values="{= [${i18n>revenue}] }"/>
+                <viz.feeds:FeedItem uid="color" type="Dimension" values="{= [${i18n>region}] }"/>
+              </viz:feeds>
+            </viz:VizFrame>
+          </Panel>
+
+          <!-- bar: total stock per book -->
+          <Panel id="stockPanel" headerText="{i18n>stockByBook}">
+            <viz:VizFrame id="stockChart" vizType="bar" width="100%" height="22rem" uiConfig="{applicationSet: 'fiori'}">
+              <viz:dataset>
+                <viz.data:FlattenedDataset data="{charts>/stock}">
+                  <viz.data:dimensions>
+                    <viz.data:DimensionDefinition name="{i18n>book}" value="{charts>book}"/>
+                  </viz.data:dimensions>
+                  <viz.data:measures>
+                    <viz.data:MeasureDefinition name="{i18n>stock}" value="{charts>stock}"/>
+                  </viz.data:measures>
+                </viz.data:FlattenedDataset>
+              </viz:dataset>
+              <viz:feeds>
+                <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="{= [${i18n>stock}] }"/>
+                <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="{= [${i18n>book}] }"/>
+              </viz:feeds>
+            </viz:VizFrame>
+          </Panel>
+
+          <!-- line: total sales per day -->
+          <Panel id="dayPanel" headerText="{i18n>salesByDay}">
+            <viz:VizFrame id="dayChart" vizType="line" width="100%" height="22rem" uiConfig="{applicationSet: 'fiori'}">
+              <viz:dataset>
+                <viz.data:FlattenedDataset data="{charts>/days}">
+                  <viz.data:dimensions>
+                    <viz.data:DimensionDefinition name="{i18n>day}" value="{charts>day}"/>
+                  </viz.data:dimensions>
+                  <viz.data:measures>
+                    <viz.data:MeasureDefinition name="{i18n>revenue}" value="{charts>amount}"/>
+                  </viz.data:measures>
+                </viz.data:FlattenedDataset>
+              </viz:dataset>
+              <viz:feeds>
+                <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="{= [${i18n>revenue}] }"/>
+                <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="{= [${i18n>day}] }"/>
+              </viz:feeds>
+            </viz:VizFrame>
+          </Panel>
+
+          <!-- column + line: revenue and units sold per book -->
+          <Panel id="bookPanel" headerText="{i18n>salesByBook}">
+            <viz:VizFrame id="bookChart" vizType="dual_combination" width="100%" height="22rem" uiConfig="{applicationSet: 'fiori'}">
+              <viz:dataset>
+                <viz.data:FlattenedDataset data="{charts>/books}">
+                  <viz.data:dimensions>
+                    <viz.data:DimensionDefinition name="{i18n>book}" value="{charts>book}"/>
+                  </viz.data:dimensions>
+                  <viz.data:measures>
+                    <viz.data:MeasureDefinition name="{i18n>revenue}" value="{charts>amount}"/>
+                    <viz.data:MeasureDefinition name="{i18n>units}" value="{charts>quantity}"/>
+                  </viz.data:measures>
+                </viz.data:FlattenedDataset>
+              </viz:dataset>
+              <viz:feeds>
+                <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="{= [${i18n>revenue}] }"/>
+                <viz.feeds:FeedItem uid="valueAxis2" type="Measure" values="{= [${i18n>units}] }"/>
+                <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="{= [${i18n>book}] }"/>
+              </viz:feeds>
+            </viz:VizFrame>
+          </Panel>
+
+        </l:Grid>
+      </content>
+    </Page>
+  </App>
+</mvc:View>

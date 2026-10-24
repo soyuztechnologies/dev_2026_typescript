@@ -1,0 +1,45 @@
+{
+  "_version": "2.0.0",
+  "sap.app": {
+    "id": "anubhav.analyticapp",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": { "version": "1.0.0" },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "dataSources": {
+      "analytics": {
+        "uri": "/analytics/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": { "desktop": true, "tablet": true, "phone": true }
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "anubhav.analyticapp.view.Main",
+      "type": "XML",
+      "id": "main"
+    },
+    "dependencies": {
+      "minUI5Version": "1.136.0",
+      "libs": { "sap.m": {}, "sap.ui.layout": {}, "sap.viz": {} }
+    },
+    "contentDensities": { "compact": true, "cozy": true },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "anubhav.analyticapp.i18n.i18n" }
+      },
+      "": {
+        "dataSource": "analytics",
+        "preload": true,
+        "settings": { "operationMode": "Server", "autoExpandSelect": true }
+      }
+    }
+  }
+}

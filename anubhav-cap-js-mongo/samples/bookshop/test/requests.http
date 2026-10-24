@@ -51,3 +51,15 @@ Authorization: Basic alice:
 Content-Type: application/json
 
 {}
+
+### Analytics app: total sales per region (donut)
+GET {{server}}/analytics/salesByRegion()
+
+### Analytics app: total stock per book (bar)
+GET {{server}}/analytics/stockByBook()
+
+### Analytics app: total sales per day (line)
+GET {{server}}/analytics/salesByDay()
+
+### Analytics app: revenue and units sold per book (column + line)
+GET {{server}}/analytics/salesByBook()

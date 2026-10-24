@@ -55,7 +55,7 @@ samples/bookshop
    } } } }
    ```
 
-   or set an environment variable instead: `MONGODB_URI=mongodb+srv://user:password@cluster0.xxxxx.mongodb.net`
+   or set an environment variable instead: `MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net`
 
 4. Check the connection and start:
 
@@ -67,6 +67,7 @@ samples/bookshop
    The sample sets `"autoDeploy": true` in `package.json`, so the model is deployed on boot: the log shows
    `[mongo] - connected to ...` and `initial data loaded into: ...`. Open <http://localhost:4004>:
    - **Fiori preview** of `AdminService.Books` (login `alice`, no password) – create a book, edit as draft, activate
+   - **analyticapp** (`/analyticapp/webapp/index.html`) – freestyle SAPUI5 dashboard with `sap.viz` charts, see [below](#analytics-app-sapviz)
    - `/analytics/stockByGenre()` and `/analytics/topAuthors(minBooks=1,top=3,skip=0)`
    - more requests in [test/requests.http](test/requests.http)
 
@@ -89,6 +90,22 @@ SELECT.from(Books)
 ```
 
 and OData: `/analytics/Books?$apply=groupby((author_ID),aggregate(stock with sum as total))&$orderby=total desc&$top=3`
+
+## Analytics app (sap.viz)
+
+[app/analyticapp](app/analyticapp/webapp) is a freestyle SAPUI5 app that shows four `sap.viz.ui5.controls.VizFrame` charts on one page:
+
+| Chart | vizType | Source |
+|---|---|---|
+| Total sales per region | `donut` | `/analytics/salesByRegion()` |
+| Total stock per book | `bar` | `/analytics/stockByBook()` |
+| Total sales per day | `line` | `/analytics/salesByDay()` |
+| Revenue and units sold per book | `dual_combination` | `/analytics/salesByBook()` |
+
+The functions group the `Sales` collection with plain CQL (`groupBy` / `sum` / `orderBy`), see
+[srv/analytics-service.js](srv/analytics-service.js). The controller calls them through the OData V4 model and
+puts the results into a JSON model for the charts' `FlattenedDataset`. `sap.viz` is part of SAPUI5 only, so
+`index.html` loads UI5 from `ui5.sap.com`. Sales seed data: [db/data/anubhav.bookshop-Sales.csv](db/data/anubhav.bookshop-Sales.csv).
 
 ## Deploy to SAP BTP Cloud Foundry
 
