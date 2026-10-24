@@ -3,6 +3,21 @@
 All notable changes to `@anubhav-cap-js/mongo` are documented here.
 This project follows [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+### Added
+
+- Option `replaceMode` (default `false`): the deployment on boot drops and re-creates all collections of the model
+  and loads the current csv data again - for development, when initial data files have changed.
+
+### Fixed
+
+- Path expressions declared in a projection that is itself projected again, e.g. `ListOfBooks as projection on Books`
+  with `Books { *, author.name as author }`, failed with `join element "author_ID" is not a stored field`.
+
+- `$top=0` (e.g. `?$count=true&$top=0`) failed with "the limit must be positive"; it now returns an empty
+  result together with the count.
+
 ## 1.0.1 - 2026-10-24
 
 First public release (version 1.0.0 was unpublished and can't be reused on npm).

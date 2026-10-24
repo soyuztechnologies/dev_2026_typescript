@@ -82,7 +82,8 @@ class MongoService extends DatabaseService {
     this.on('*', this.onPlainQuery)
     require('./patch-deploy')()
     const done = super.init()
-    const mode = autoDeployMode(this.options.autoDeploy) // validates the option at boot, also when switched off
+    const mode = autoDeployMode(this.options.autoDeploy) // validates the options at boot, also when switched off
+    replaceMode(this.options.replaceMode)
     if (!mode || !this.model?.definitions || cds.requires.multitenancy) return done
     return Promise.resolve(done).then(() => this.autoDeploy())
   }
@@ -446,17 +447,25 @@ class MongoService extends DatabaseService {
    * true (default): creates missing collections and indexes, and loads initial data from csv files
    * into empty collections. Never deletes or changes existing data.
    * With autoDeploy: "schema" only collections and indexes are created.
+   * With replaceMode: true all collections of the model are dropped and re-created first, so that
+   * changed csv files are loaded again - all data in these collections is lost on every boot.
    */
   async autoDeploy() {
     const mode = autoDeployMode(this.options.autoDeploy) || 'full'
+    const replace = replaceMode(this.options.replaceMode)
     const t0 = Date.now()
     let seeded = []
     await this.tx(async tx => {
-      await tx.deploySchema(this.model, { drop: false })
+      if (replace) {
+        await tx._client() // connects -> database name for the log
+        LOG.warn(`replaceMode: dropping and re-creating all collections of database "${this._state.conn.database}" - existing data is deleted`)
+      }
+      await tx.deploySchema(this.model, { drop: replace })
       if (mode === 'full') seeded = await seedIfEmpty(tx, this.model)
     })
     LOG.info(
-      `${persistedEntities(this.model).size} collections ready in ${Date.now() - t0} ms` + (seeded.length ? `, initial data loaded into: ${seeded.join(', ')}` : '')
+      `${persistedEntities(this.model).size} collections ${replace ? 're-created' : 'ready'} in ${Date.now() - t0} ms` +
+        (seeded.length ? `, initial data loaded into: ${seeded.join(', ')}` : '')
     )
   }
 
@@ -529,6 +538,16 @@ function autoDeployMode(value) {
   throw error(500, 'MONGO_CONFIG_INVALID', `Invalid value ${JSON.stringify(value)} for cds.requires["anubhav-mongo"].autoDeploy - use true, false or "schema"`)
 }
 
+/** Normalizes the replaceMode option to a boolean (default false), like autoDeploy also from strings */
+function replaceMode(value) {
+  if (value === undefined || value === null || value === false) return false
+  if (value === true) return true
+  const v = String(value).trim().toLowerCase()
+  if (['true', '1', 'yes', 'on'].includes(v)) return true
+  if (['false', '0', 'no', 'off', ''].includes(v)) return false
+  throw error(500, 'MONGO_CONFIG_INVALID', `Invalid value ${JSON.stringify(value)} for cds.requires["anubhav-mongo"].replaceMode - use true or false`)
+}
+
 const _json = x => {
   try {
     return JSON.stringify(x)
@@ -563,3 +582,4 @@ function _set(doc, path, v) {
 module.exports = MongoService
 module.exports.MongoService = MongoService
 module.exports.autoDeployMode = autoDeployMode
+module.exports.replaceMode = replaceMode

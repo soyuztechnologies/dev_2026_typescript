@@ -10,7 +10,7 @@ import { MongoClient } from 'mongodb'
 import { MongoMemoryReplSet } from 'mongodb-memory-server'
 
 const require = createRequire(import.meta.url)
-const { autoDeployMode } = require('../lib/MongoService')
+const { autoDeployMode, replaceMode } = require('../lib/MongoService')
 const impl = path.join(import.meta.dirname, '..', 'index.js')
 
 let rs, client, n = 0
@@ -25,8 +25,8 @@ after(async () => {
 })
 
 /** boots a MongoDB service like an application start, each one with its own database */
-async function boot(autoDeploy, database = `boot_${++n}`) {
-  const srv = await cds.connect.to(`mongo_${n}_${Math.random().toString(36).slice(2)}`, { impl, url: rs.getUri(), database, autoDeploy })
+async function boot(autoDeploy, database = `boot_${++n}`, more = {}) {
+  const srv = await cds.connect.to(`mongo_${n}_${Math.random().toString(36).slice(2)}`, { impl, url: rs.getUri(), database, autoDeploy, ...more })
   const db = client.db(database)
   const collections = (await db.listCollections({}, { nameOnly: true }).toArray()).map(c => c.name)
   const books = collections.includes('sap_capire_bookshop_Books') ? await db.collection('sap_capire_bookshop_Books').countDocuments() : 0
@@ -110,5 +110,67 @@ describe('autoDeploy option', () => {
     for (const v of [true, 'true', 'TRUE', '1', 'yes', 'on', undefined, null]) assert.equal(autoDeployMode(v), 'full', String(v))
     for (const v of [false, 'false', 'False', '0', 'no', 'off', '']) assert.equal(autoDeployMode(v), false, String(v))
     assert.equal(autoDeployMode('schema'), 'schema')
+  })
+})
+
+describe('replaceMode option', () => {
+  /** first boot loads the csv data, then a user changes it */
+  const changed = async database => {
+    const first = await boot(true, database)
+    const books = first.db.collection('sap_capire_bookshop_Books')
+    await books.updateOne({ ID: 201 }, { $set: { title: 'changed by user' } })
+    await books.deleteOne({ ID: 207 })
+    await books.insertOne({ ID: 999, title: 'added by user' })
+    await first.db.collection('sap_capire_bookshop_Authors').deleteMany({})
+    await first.db.collection('not_in_model').insertOne({ x: 1 })
+    await first.srv.disconnect()
+  }
+
+  test('true: all collections of the model are dropped and re-created with the csv data on boot', async () => {
+    await changed('replace_on')
+    const { srv, db, books } = await boot(true, 'replace_on', { replaceMode: true })
+    after(() => srv.disconnect())
+    assert.equal(books, 5)
+    const Books = db.collection('sap_capire_bookshop_Books')
+    assert.equal((await Books.findOne({ ID: 201 })).title, 'Wuthering Heights')
+    assert.ok(await Books.findOne({ ID: 207 }))
+    assert.equal(await Books.findOne({ ID: 999 }), null)
+    assert.equal(await db.collection('sap_capire_bookshop_Authors').countDocuments(), 4)
+    assert.equal(await db.collection('not_in_model').countDocuments(), 1, 'other collections are not touched')
+    const indexes = (await Books.indexes()).map(i => i.name)
+    assert.ok(indexes.includes('cap_pk') && indexes.includes('cap_uq_isbn'), indexes.join())
+  })
+
+  test('false or not configured: existing data is kept', async () => {
+    await changed('replace_off')
+    for (const replaceMode of [false, undefined, 'false']) {
+      const { srv, books } = await boot(true, 'replace_off', { replaceMode })
+      assert.equal(books, 5, String(replaceMode)) // 5 csv rows - 1 deleted + 1 added
+      await srv.disconnect()
+    }
+  })
+
+  test('with autoDeploy: false nothing is dropped', async () => {
+    await changed('replace_no_deploy')
+    const { srv, db } = await boot(false, 'replace_no_deploy', { replaceMode: true })
+    assert.equal((await db.collection('sap_capire_bookshop_Books').findOne({ ID: 201 })).title, 'changed by user')
+    await srv.disconnect()
+  })
+
+  test('with autoDeploy: "schema" the collections are re-created empty', async () => {
+    await changed('replace_schema')
+    const { srv, collections, books } = await boot('schema', 'replace_schema', { replaceMode: true })
+    assert.ok(collections.includes('sap_capire_bookshop_Books'))
+    assert.equal(books, 0)
+    await srv.disconnect()
+  })
+
+  test('invalid values fail the boot with a clear error', async () => {
+    await assert.rejects(boot(true, undefined, { replaceMode: 'always' }), e => e.code === 'MONGO_CONFIG_INVALID' && /replaceMode/.test(e.message))
+  })
+
+  test('value parsing', () => {
+    for (const v of [true, 'true', 'TRUE', '1', 'yes', 'on']) assert.equal(replaceMode(v), true, String(v))
+    for (const v of [false, 'false', 'False', '0', 'no', 'off', '', undefined, null]) assert.equal(replaceMode(v), false, String(v))
   })
 })

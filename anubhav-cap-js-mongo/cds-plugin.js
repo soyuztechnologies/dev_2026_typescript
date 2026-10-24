@@ -30,7 +30,7 @@ if (conf && conf.primary !== false && requires.db !== conf) {
 // cds.requires.db = { kind: 'anubhav-mongo' } with connection details in cds.requires['anubhav-mongo']
 const db = requires?.db
 if (db?.kind === KIND && conf && db !== conf) {
-  for (const k of ['url', 'credentials', 'destination', 'dbName', 'database', 'client', 'autoDeploy', 'maxTimeMS', 'dnsServers']) if (db[k] === undefined && conf[k] !== undefined) db[k] = conf[k]
+  for (const k of ['url', 'credentials', 'destination', 'dbName', 'database', 'client', 'autoDeploy', 'replaceMode', 'maxTimeMS', 'dnsServers']) if (db[k] === undefined && conf[k] !== undefined) db[k] = conf[k]
 }
 
 // `cds deploy` creates collections and indexes instead of SQL tables

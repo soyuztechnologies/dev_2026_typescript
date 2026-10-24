@@ -52,6 +52,26 @@ describe('reading data', () => {
     )
   })
 
+  test('projection on a projection with path expression (ListOfBooks on Books { author.name as author })', async () => {
+    let { data } = await GET(`/browse/ListOfBooks?$select=ID,title,author&$orderby=ID&$top=2`)
+    assert.deepEqual(data.value, [
+      { ID: 201, title: 'Wuthering Heights', author: 'Emily Brontë' },
+      { ID: 207, title: 'Jane Eyre', author: 'Charlotte Brontë' }
+    ])
+    ;({ data } = await GET(`/browse/ListOfBooks(251)?$select=author`))
+    assert.equal(data.author, 'Edgar Allen Poe')
+    ;({ data } = await GET(`/browse/ListOfBooks?$filter=author eq 'Edgar Allen Poe'&$orderby=author,ID&$select=ID`))
+    assert.deepEqual(data.value.map(b => b.ID), [251, 252])
+    ;({ data } = await GET(`/browse/ListOfBooks?$apply=groupby((author),aggregate(stock with sum as stock))&$orderby=stock desc&$top=1`))
+    assert.deepEqual(data.value, [{ author: 'Edgar Allen Poe', stock: 888 }])
+  })
+
+  test('$top=0 with $count returns only the count', async () => {
+    const { data } = await GET(`/browse/Books?$filter=stock gt 20&$top=0&$count=true`)
+    assert.equal(data['@odata.count'], 3)
+    assert.deepEqual(data.value, [])
+  })
+
   test('$filter on path expressions (author/name)', async () => {
     const { data } = await GET(`/admin/Books?$filter=author/name eq 'Edgar Allen Poe' and IsActiveEntity eq true&$select=ID`, admin)
     assert.deepEqual(data.value.map(b => b.ID).sort(), [251, 252])
@@ -63,6 +83,76 @@ describe('reading data', () => {
       data.value.map(a => a.ID),
       [150]
     )
+  })
+
+  test('$filter with any() / all() lambdas: negation, nesting, paths, $apply, $count, $expand', async () => {
+    const ids = async (url, user = admin) => (await GET(url, user)).data.value.map(a => a.ID)
+    const authors = f => ids(`/admin/Authors?$filter=${f}&$select=ID&$orderby=ID`)
+    assert.deepEqual(await authors('books/any()'), [101, 107, 150, 170])
+    assert.deepEqual(await authors('not books/any(b:b/stock gt 500)'), [101, 107, 170])
+    assert.deepEqual(await authors('books/all(b:b/stock gt 100)'), [150])
+    assert.deepEqual(await authors('not books/all(b:b/stock gt 100)'), [101, 107, 170])
+    assert.deepEqual(await authors('books/all(b:b/stock gt 1000)'), [])
+    assert.deepEqual(await authors('books/any(b:b/stock gt 100 and b/price lt 14) or ID eq 101'), [101, 150])
+    assert.deepEqual(await authors(`books/any(b:contains(b/title,'Rav'))`), [150])
+    assert.deepEqual(await authors('books/any(b:b/isbn eq null)'), [170])
+    assert.deepEqual(await authors('books/any(b:b/ID in (201,252))'), [101, 150])
+    assert.deepEqual(await authors(`books/all(b:b/currency/code eq 'GBP')`), [101, 107])
+    assert.deepEqual(await authors(`books/any(b:b/genre/name eq 'Drama')`), [101, 107])
+    assert.deepEqual(await authors(`books/all(b:b/genre/name eq 'Mystery')`), [150])
+    assert.deepEqual(await authors('books/any(b:b/author/books/any(c:c/stock gt 500))'), [150])
+    assert.deepEqual(await authors('books/any(b:b/genre/children/any())'), [])
+    assert.deepEqual(await authors('books/any(b:b/stock gt 500) and books/all(b:b/price gt 13)'), [150])
+    // all() is true for an empty collection: Genres without children
+    assert.deepEqual(await ids(`/admin/Genres?$filter=children/all(c:c/name ne 'Drama')&$select=ID&$orderby=ID`), [11, 12, 13, 16, 20, 21])
+    // lambda after a to-one navigation, in a projection with renamed association (InStock.writer)
+    assert.deepEqual(await ids(`/admin/Books?$filter=IsActiveEntity eq true and author/books/all(b:b/stock gt 100)&$select=ID&$orderby=ID`), [251, 252])
+    assert.deepEqual(await ids(`/browse/InStock?$filter=writer/books/all(b:b/stock gt 100)&$select=ID&$orderby=ID`), [251, 252])
+    // combined with instance based authorization (carol: address_city = Haworth)
+    assert.deepEqual(await ids(`/restricted/Authors?$filter=books/any(b:b/stock gt 1)&$select=ID&$orderby=ID`, { auth: { username: 'carol' } }), [101, 107])
+
+    let { data } = await GET(`/admin/Authors?$filter=books/any(b:b/stock gt 500)&$count=true&$top=0`, admin)
+    assert.equal(data['@odata.count'], 1)
+    ;({ data } = await GET(`/admin/Authors/$count?$filter=books/all(b:b/stock gt 100)`, admin))
+    assert.equal(data, 1)
+    ;({ data } = await GET(`/admin/Authors?$apply=filter(books/all(b:b/stock gt 100))/aggregate($count as n)`, admin))
+    assert.equal(data.value[0].n, 1)
+    ;({ data } = await GET(`/admin/Authors?$filter=ID ge 150&$select=ID&$orderby=ID&$expand=books($filter=author/books/any(x:x/stock gt 500);$select=ID;$orderby=ID)`, admin))
+    assert.deepEqual(data.value.map(a => [a.ID, a.books.map(b => b.ID)]), [[150, [251, 252]], [170, []]])
+  })
+
+  test('$filter with any() / all() lambdas on compositions, incl. drafts', async () => {
+    const { Orders } = cds.entities('sap.capire.bookshop')
+    await INSERT.into(Orders).entries(
+      { OrderNo: 'L-1', items: [{ pos: 1, book_ID: 201, quantity: 1 }, { pos: 2, book_ID: 251, quantity: 3 }], notes: [{ text: 'urgent delivery' }] },
+      { OrderNo: 'L-2', items: [{ pos: 1, book_ID: 252, quantity: 2 }, { pos: 2, book_ID: 251, quantity: 5 }] },
+      { OrderNo: 'L-3', notes: [{ text: 'gift' }] },
+      { OrderNo: 'L-4', items: [{ pos: 1, book_ID: 207, quantity: 2 }] }
+    )
+    const orders = async (f, active = 'IsActiveEntity eq true') =>
+      (await GET(`/orders/Orders?$filter=${active} and startswith(OrderNo,'L-') and ${f}&$select=OrderNo&$orderby=OrderNo`, admin)).data.value.map(o => o.OrderNo)
+    assert.deepEqual(await orders('items/any(i:i/quantity gt 2)'), ['L-1', 'L-2'])
+    assert.deepEqual(await orders('items/all(i:i/quantity gt 1)'), ['L-2', 'L-3', 'L-4'])
+    assert.deepEqual(await orders(`items/any(i:i/book/author/name eq 'Edgar Allen Poe')`), ['L-1', 'L-2'])
+    assert.deepEqual(await orders('items/all(i:i/book/stock gt 100)'), ['L-2', 'L-3'])
+    assert.deepEqual(await orders(`notes/any(n:contains(n/text,'urgent'))`), ['L-1'])
+    assert.deepEqual(await orders('not notes/any()'), ['L-2', 'L-4'])
+
+    // drafts: the lambda is evaluated on the draft items - L-5 new draft, L-4 edited (quantity 2 -> 9)
+    const { data: d } = await POST('/orders/Orders', { OrderNo: 'L-5', items: [{ pos: 1, book_ID: 201, quantity: 9 }, { pos: 2, book_ID: 207, quantity: 10 }] }, admin)
+    const { ID } = (await GET(`/orders/Orders?$filter=OrderNo eq 'L-4' and IsActiveEntity eq true&$select=ID`, admin)).data.value[0]
+    await POST(`/orders/Orders(ID=${ID},IsActiveEntity=true)/OrdersService.draftEdit`, { PreserveChanges: true }, admin)
+    await PATCH(`/orders/Orders_items(up__ID=${ID},pos=1,IsActiveEntity=false)`, { quantity: 9 }, admin)
+    const fiori = '(IsActiveEntity eq false or SiblingEntity/IsActiveEntity eq null)'
+    assert.deepEqual(await orders('items/any(i:i/quantity gt 8)', fiori), ['L-4', 'L-5'])
+    assert.deepEqual(await orders('items/all(i:i/quantity gt 8)', fiori), ['L-3', 'L-4', 'L-5'])
+    assert.deepEqual(await orders('items/all(i:i/quantity gt 8)', 'IsActiveEntity eq false'), ['L-4', 'L-5'])
+    assert.deepEqual(await orders('items/any(i:i/quantity gt 8)'), [])
+
+    await DEL(`/orders/Orders(ID=${d.ID},IsActiveEntity=false)`, admin)
+    await DEL(`/orders/Orders(ID=${ID},IsActiveEntity=false)`, admin)
+    await DELETE.from(Orders).where(`OrderNo like 'L-%'`)
+    assert.equal((await SELECT.from('sap.capire.bookshop.Orders.items').where({ up__ID: ID })).length, 0)
   })
 
   test('$filter functions and null handling', async () => {

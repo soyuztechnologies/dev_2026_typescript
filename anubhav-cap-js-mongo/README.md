@@ -172,6 +172,17 @@ production where you deploy explicitly with `npx anubhav-mongo deploy`:
 }
 ```
 
+Changed your csv files? As existing data is never overwritten, they are not loaded again on the next start. Either
+run `npx anubhav-mongo deploy --drop` once, or switch on `replaceMode` – then every start drops and re-creates all
+collections of the model and loads the current csv data (⚠ deletes all data in these collections, development only):
+
+```json
+"anubhav-mongo": {
+  "autoDeploy": true,
+  "[development]": { "replaceMode": true }
+}
+```
+
 ### Step 5 – Create a BTP destination for MongoDB
 
 SAP BTP cockpit → subaccount → *Connectivity* → **Destinations** → *New Destination*:
@@ -251,6 +262,7 @@ All options are set in `cds.requires["anubhav-mongo"]`:
 | `database` | – | Alias of `dbName` (older configurations) |
 | `primary` | `true` | `false` keeps another primary database; then use `cds.connect.to('anubhav-mongo')` |
 | `autoDeploy` | `true` | Deploy the model on boot of the application: create missing collections and indexes and load initial data into empty collections (existing data is never changed). `false` = off, `"schema"` = collections and indexes only. String values like `"false"` from environment variables are understood. |
+| `replaceMode` | `false` | `true` = the deployment on boot first **drops and re-creates all collections of the model**, so changed csv files are loaded again. All data in these collections (incl. drafts) is deleted on every start – use it in development only, e.g. `"[development]": { "replaceMode": true }`. Collections that don't belong to the model are not touched. Needs `autoDeploy` (with `"schema"` the collections are re-created empty). |
 | `transactions` | `"auto"` | Transactions on replica sets / Atlas; `true` or `false` to force |
 | `transactionOptions` | – | MongoDB transaction options, e.g. `{ "writeConcern": { "w": "majority" } }` |
 | `client` | – | `MongoClient` options, e.g. `{ "maxPoolSize": 20, "serverSelectionTimeoutMS": 5000 }` |
@@ -421,7 +433,9 @@ Errors have an HTTP `status`, a `code` and a message with a hint. The original d
 - Views with **joins or unions** and parameterized views are not supported (projections are).
 - **Native SQL** (`cds.run('SELECT ...')`) is not available – use CQL or `db.native()`.
 - Path expressions in columns, `orderBy` and `groupBy` must be **to-one** (use `$expand` for to-many).
-- `exists` predicates and path expressions in filters run one additional query per association step.
+- `exists` predicates, OData lambdas (`any`/`all`) and path expressions in filters run one additional query per
+  association step.
+- Counting a to-many association in a filter (`$filter=books/$count gt 1`) is not supported – use `any`/`all`.
 - `SELECT ... forUpdate` does not lock; transactions detect conflicts instead (`MONGO_WRITE_CONFLICT`).
 - **Standalone** MongoDB servers have no transactions, so errors can't roll back earlier writes (Atlas and
   replica sets are fine).

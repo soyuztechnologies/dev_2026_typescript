@@ -6,3 +6,14 @@ ID;parent_ID;name
 16;10;Mystery
 20;;Non-Fiction
 21;20;Biography
+30;;Engineering
+31;30;Computer Science & Engineering
+32;30;Electronics & Communication
+33;31;Algorithms & Programming
+34;31;Systems & Networks
+35;31;Artificial Intelligence & Data
+36;31;Software Engineering
+37;32;Circuits & Devices
+38;32;Signals & Communication
+39;32;VLSI & Embedded Systems
+40;32;Electromagnetics & Microwave

@@ -57,6 +57,7 @@ class Select {
   async fetch(scope, filter, opts, joinPaths = []) {
     const cols = this.columns(scope, opts.columns)
     const grouped = (opts.grouped = !!(opts.groupBy?.length || opts.distinct || cols.some(c => c.kind === 'agg')))
+    if (opts.rows === 0) return [] // e.g. $top=0 with $count - MongoDB rejects { $limit: 0 }
     const hidden = [...joinPaths]
     const hide = path => {
       let i = hidden.indexOf(path)
@@ -273,9 +274,12 @@ class Select {
     if (nav.assoc.is2many) throw unsupported(`To-many path expression via ${nav.assoc.name}`)
     const spec = joinSpec(nav.assoc)
     const t = this.c.info(nav.assoc._target).assertPersistent()
+    // the join elements belong to the layer which declares the path, e.g. `author.name as author` in a
+    // projection of a projection -> author_ID is resolved there (nav.scope), not in the outer entity
+    const src = nav.scope || scope
     const vars = {}
     const conds = spec.pairs.map((p, i) => {
-      vars['k' + i] = '$' + _required(scope, p.src, nav.assoc)
+      vars['k' + i] = '$' + _required(src, p.src, nav.assoc)
       return { $eq: ['$' + _required(t, p.tgt, nav.assoc), '$$k' + i] }
     })
     const sub = [{ $match: { $expr: conds.length === 1 ? conds[0] : { $and: conds } } }]
