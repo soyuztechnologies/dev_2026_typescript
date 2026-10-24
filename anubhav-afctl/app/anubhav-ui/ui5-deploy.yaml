@@ -1,0 +1,12 @@
+specVersion: "2.5"
+metadata:
+  name: anubhav-ui
+type: application
+builder: 
+  customTasks:
+    - name: ui5-task-zipper
+      afterTask: generateComponentPreload
+      configuration:
+        archiveName: anubhav-ui
+        additionalFiles:
+          "xs-app.json": ~

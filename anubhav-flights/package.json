@@ -1,0 +1,24 @@
+{
+  "name": "anubhav-flights",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@cap-js/mcp": "^1.4.3",
+    "@capire/xflights-data": "^1.2.6",
+    "@sap/cds": "^10"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^3"
+  },
+  "cds":{
+    "mcp":{
+      "per_action_tool": true,
+      "prefix": false,
+      "format": "cql"
+    }
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "private": true
+}
