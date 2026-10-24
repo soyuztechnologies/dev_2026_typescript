@@ -3,7 +3,9 @@
 All notable changes to `@anubhav-cap-js/mongo` are documented here.
 This project follows [Semantic Versioning](https://semver.org).
 
-## 1.0.0 - 2026-10-23
+## 1.0.1 - 2026-10-24
+
+First public release (version 1.0.0 was unpublished and can't be reused on npm).
 
 ### Added
 
