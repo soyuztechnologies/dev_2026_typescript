@@ -445,26 +445,20 @@ Errors have an HTTP `status`, a `code` and a message with a hint. The original d
 
 ## Sample application
 
-A complete sample app is included in this package in the folder `samples/bookshop` (browse it in the
-[Code tab](https://www.npmjs.com/package/@anubhav-cap-js/mongo?activeTab=code)). It contains a catalog service,
-a Fiori Elements admin app with drafts, an analytics service with `$apply` and CQL `groupBy`/`having`/`limit`,
-and `mta.yaml` / `xs-security.json` for SAP BTP:
+A complete sample app is available on
+[GitHub](https://github.com/soyuztechnologies/dev_2026_typescript/tree/master/anubhav-cap-js-mongo/samples/bookshop)
+(it is not part of the npm package). It contains a catalog service, a Fiori Elements admin app with drafts, an
+analytics service with `$apply` and CQL `groupBy`/`having`/`limit`, a freestyle SAPUI5 analytics app with `sap.viz`
+charts, and `mta.yaml` / `xs-security.json` for SAP BTP:
 
 ```sh
-npm add @anubhav-cap-js/mongo
-cp -r node_modules/@anubhav-cap-js/mongo/samples/bookshop my-bookshop
+git clone --depth 1 https://github.com/soyuztechnologies/dev_2026_typescript.git
+cp -r dev_2026_typescript/anubhav-cap-js-mongo/samples/bookshop my-bookshop
 cd my-bookshop
 npm install
 ```
 
-npm doesn't ship `.gitignore` files, so create one before you add your password – this keeps
-`.cdsrc-private.json` out of git:
-
-```sh
-node -e "require('fs').writeFileSync('.gitignore','node_modules/\ngen/\nmta_archives/\n.cdsrc-private.json\n')"
-```
-
-Then copy `.cdsrc-private.example.json` to `.cdsrc-private.json`, add your Atlas host, user and password, and
+The sample's `.gitignore` already keeps `.cdsrc-private.json` out of git. Then copy `.cdsrc-private.example.json` to `.cdsrc-private.json`, add your Atlas host, user and password, and
 run `npm run watch`. The sample's `README.md` has all details.
 
 ## Support

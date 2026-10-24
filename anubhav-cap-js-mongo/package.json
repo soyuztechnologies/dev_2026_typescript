@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "CDS database service for MongoDB and MongoDB Atlas - use MongoDB as the persistence of SAP CAP (Node.js) applications, with hardcoded credentials or SAP BTP destinations.",
   "homepage": "https://www.anubhavtrainings.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soyuztechnologies/dev_2026_typescript.git",
+    "directory": "anubhav-cap-js-mongo"
+  },
   "keywords": [
     "CAP",
     "CDS",
@@ -25,13 +30,6 @@
     "cds-plugin.js",
     "lib",
     "bin",
-    "samples",
-    "!samples/**/.cdsrc-private.json",
-    "!samples/**/default-env.json",
-    "!samples/**/.env",
-    "!samples/**/node_modules",
-    "!samples/**/gen",
-    "!samples/**/mta_archives",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"

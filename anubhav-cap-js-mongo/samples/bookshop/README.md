@@ -29,17 +29,13 @@ samples/bookshop
 2. Get the sample and install it:
 
    ```sh
-   npm add @anubhav-cap-js/mongo
-   cp -r node_modules/@anubhav-cap-js/mongo/samples/bookshop my-bookshop
+   git clone --depth 1 https://github.com/soyuztechnologies/dev_2026_typescript.git
+   cp -r dev_2026_typescript/anubhav-cap-js-mongo/samples/bookshop my-bookshop
    cd my-bookshop
    npm install
    ```
 
-   npm packages contain no `.gitignore` files – create one, so that your password never ends up in git:
-
-   ```sh
-   node -e "require('fs').writeFileSync('.gitignore','node_modules/\ngen/\nmta_archives/\n.cdsrc-private.json\n')"
-   ```
+   The included `.gitignore` keeps `.cdsrc-private.json` (your password) out of git.
 
    > Working inside the source of the plugin (git clone)? Don't run `npm install` in `samples/bookshop`.
    > Run `npm install` and `npm run link:sample` in the plugin root instead. That links the local plugin

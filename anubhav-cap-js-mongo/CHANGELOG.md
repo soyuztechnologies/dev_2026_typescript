@@ -21,7 +21,8 @@ This project follows [Semantic Versioning](https://semver.org).
 - Analytics: `groupBy` / `having` / `orderBy` / `limit` / `distinct` and aggregates (also over to-one paths such as
   `product.category`), OData `$apply` incl. `groupby` over navigation properties - verified to return the same
   results as `@cap-js/sqlite`.
-- Sample application `samples/bookshop` (Fiori drafts, analytics service, SAP BTP deployment).
+- Sample application `samples/bookshop` on GitHub, not part of the npm package (Fiori drafts, analytics service,
+  freestyle SAPUI5 analytics app with `sap.viz` charts, SAP BTP deployment).
 - Option `maxTimeMS` to limit the run time of queries.
 - `mongodb+srv://` URLs work when the DNS server of Node.js can't be reached (e.g. 127.0.0.1 on Windows): the cluster
   is then resolved via public DNS servers, configurable with option `dnsServers`.
