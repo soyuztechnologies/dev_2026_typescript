@@ -106,8 +106,11 @@ puts the results into a JSON model for the charts' `FlattenedDataset`. `sap.viz`
 ## Deploy to SAP BTP Cloud Foundry
 
 1. In the BTP cockpit create the destination **`MONGO_ATLAS`** (Type `HTTP`, URL `https://cluster0.xxxxx.mongodb.net`,
-   Proxy `Internet`, `BasicAuthentication` with the Atlas user, optional property `mongo.database` only if the cloud should use a different database than `dbName`) –
-   details in the [package documentation, Step 5](https://www.npmjs.com/package/@anubhav-cap-js/mongo#step-5--create-a-btp-destination-for-mongodb).
+   Proxy `Internet`, `BasicAuthentication` with the Atlas database user) and add the properties
+   `mongo.url` = `mongodb+srv://cluster0.xxxxx.mongodb.net`, `mongo.database` = e.g. `anubhav-prod`,
+   `mongo.options` = `retryWrites=true&w=majority` and `mongo.authSource` = `admin`.
+   `mongo.database` overrides `dbName` (`anubhav`) – look for the data in that database. Details and an importable
+   destination file in the [package documentation, Step 5](https://www.npmjs.com/package/@anubhav-cap-js/mongo#step-5--create-a-btp-destination-for-mongodb).
 2. Allow the egress IPs of your BTP region in Atlas *Network Access*.
 3. Build and deploy. Make sure the app uses a plugin version newer than 1.0.3 – up to 1.0.3 the app crashes on
    startup with `token request failed with HTTP 401` when reading the destination

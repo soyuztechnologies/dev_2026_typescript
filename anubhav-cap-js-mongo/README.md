@@ -191,20 +191,58 @@ SAP BTP cockpit → subaccount → *Connectivity* → **Destinations** → *New 
 | --- | --- |
 | Name | `MONGO_ATLAS` (as configured in `destination`) |
 | Type | `HTTP` |
-| URL | `https://cluster0.xxxxx.mongodb.net` – the Atlas host, converted to `mongodb+srv://` automatically |
+| URL | `https://cluster0.xxxxx.mongodb.net` – the Atlas host (the cockpit only accepts `http(s)://` here) |
 | Proxy Type | `Internet` |
 | Authentication | `BasicAuthentication` |
-| User / Password | the Atlas database user |
+| User / Password | the Atlas **database user** (Atlas → *Database Access*), not your Atlas login |
 
-Optional additional properties:
+Then add these **additional properties** (*New Property*). This is the tested setup for MongoDB Atlas:
 
-| Property | Example | Meaning |
+| Property | Value | Meaning |
 | --- | --- | --- |
-| `mongo.database` | `bookshop` | database name (overrides the application configuration) |
+| `mongo.url` | `mongodb+srv://cluster0.xxxxx.mongodb.net` | connection string **without** user and password – takes precedence over `URL` |
+| `mongo.database` | `bookshop` | database name – **overrides `dbName` of the application** |
 | `mongo.options` | `retryWrites=true&w=majority` | connection string options |
-| `mongo.url` | `mongodb://host1:27017,host2:27017/?replicaSet=rs0` | complete connection string, overrides `URL` |
-| `mongo.srv` | `false` | use `mongodb://` instead of `mongodb+srv://` for the `URL` host |
-| `mongo.authSource` | `admin` | authentication database |
+| `mongo.authSource` | `admin` | authentication database – Atlas database users are always in `admin` |
+
+The host is the one Atlas shows in *Connect → Drivers*
+(`mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/...`) – copy only the host part, user and password
+come from the destination's `User` / `Password`.
+
+Instead of typing it, you can save this as `MONGO_ATLAS.json`, replace the placeholders and use
+*Import Destination* in the cockpit:
+
+```json
+{
+  "Name": "MONGO_ATLAS",
+  "Type": "HTTP",
+  "Description": "MongoDB Atlas",
+  "URL": "https://cluster0.xxxxx.mongodb.net",
+  "ProxyType": "Internet",
+  "Authentication": "BasicAuthentication",
+  "User": "<database user>",
+  "Password": "<password>",
+  "mongo.url": "mongodb+srv://cluster0.xxxxx.mongodb.net",
+  "mongo.database": "bookshop",
+  "mongo.options": "retryWrites=true&w=majority",
+  "mongo.authSource": "admin"
+}
+```
+
+Good to know:
+
+- **`mongo.database` wins over `dbName`.** With the destination above, the deployed app uses the database
+  `bookshop`, even if `package.json` says `"dbName": "anubhav"`. Look for your collections and data in the database
+  the destination names – the startup log shows it:
+  `connected to mongodb+srv://cluster0.xxxxx.mongodb.net (database: bookshop) via destination "MONGO_ATLAS"`.
+  Using a different database in production (e.g. `anubhav-prod`) than in development is a good idea.
+- **Without `mongo.url`**, the plugin turns the `URL` host into `mongodb+srv://<host>` – that works for Atlas too.
+  `mongo.url` makes the connection string explicit and is needed for self-hosted replica sets
+  (`mongodb://host1:27017,host2:27017/?replicaSet=rs0`).
+- **`mongo.srv`** is only used when there is no `mongo.url`: `false` turns the `URL` host into `mongodb://` instead
+  of `mongodb+srv://`. **Don't set it for an Atlas cluster host** without `mongo.url` – Atlas cluster names only
+  resolve via `mongodb+srv://`. With `mongo.url` set, `mongo.srv` is ignored.
+- Allow the BTP egress IPs of your Cloud Foundry region in Atlas → *Network Access* (or `0.0.0.0/0` for tests).
 
 ### Step 6 – Deploy to SAP BTP Cloud Foundry
 
@@ -226,15 +264,50 @@ resources:
       service-plan: lite
 ```
 
-`cds build` doesn't copy `db/data/*.csv` to `gen/srv`. To load the initial data on the first start in the cloud,
-add this command after `cds build --production` in the `before-all` build parameters of `mta.yaml`:
+Then build and deploy with `mbt build` and `cf deploy`. In the cloud the log shows
+`connected to ... (database: ...) via destination "MONGO_ATLAS"`.
+
+#### Initial data (CSV) on BTP
+
+On BTP, the app starts from `gen/srv`, and `cds build --production` only puts the model (`srv/csn.json`), the
+handlers and `package.json` there – **not `db/data/*.csv`**. The collections and indexes are created from the
+model, but without the csv files in the deployed app there is nothing to load: the collections stay empty, and
+there is no error.
+
+To deploy the data too, copy the csv folders into `gen/srv` after the build – in the `before-all` build
+parameters of `mta.yaml`:
 
 ```yaml
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+        # initial data for autoDeploy - empty collections are filled at the first start on BTP
         - node -e "require('fs').cpSync('db/data','gen/srv/db/data',{recursive:true})"
+        # only if you also use db/csv:
+        # - node -e "require('fs').cpSync('db/csv','gen/srv/db/csv',{recursive:true})"
 ```
 
-Then build and deploy with `mbt build` and `cf deploy`. In the cloud the log shows
-`connected to ... via destination "MONGO_ATLAS"`.
+Keep the target paths `gen/srv/db/data` and `gen/srv/db/csv` – these are the folders the startup deployment
+reads in production (relative to the app root).
+
+Checklist:
+
+- **File names** follow the CAP convention `<namespace>-<Entity>.csv` (or `<namespace>.<Entity>.csv`), e.g.
+  `anubhav.bookshop-Books.csv` for `namespace anubhav.bookshop; entity Books`. Files that match no entity are
+  silently ignored.
+- **`autoDeploy`** is `true` (default) in production – not `false` or `"schema"`.
+- **Right database:** the data goes into the database of the destination's `mongo.database` property, which
+  overrides `dbName` – see [Step 5](#step-5--create-a-btp-destination-for-mongodb).
+- **Only empty collections are filled.** If a collection already contains documents – e.g. from a test request or
+  an earlier `cds deploy` against the same database – its csv file is skipped. Delete the documents, or start the
+  app once with `replaceMode: true` (⚠ drops all collections of the model) and switch it off again.
+- **Check the result** with `cf logs <app>-srv --recent`. After the copy step, the startup log lists the entities:
+  `[mongo] - 8 collections ready in 950 ms, initial data loaded into: anubhav.bookshop.Books, ...`. If the line
+  ends after `collections ready in ... ms`, no csv files were found (or all collections already had data).
+- Optionally open the `.mtar` (a zip file) and check that the srv module contains `db/data/*.csv`.
 
 > **Use a plugin version newer than 1.0.3.** Up to 1.0.3, the app crashes on startup on BTP with
 > `cannot fetch an access token for the destination service (token request failed with HTTP 401)` when
@@ -374,6 +447,7 @@ return the same results as `@cap-js/sqlite`.
 | `npx anubhav-mongo deploy` | like startup deployment; `--drop` (like `cds deploy`), `--no-data`, `--dry`, `--profile <name>` |
 
 Initial data comes from `db/data` and `db/csv` (plus `test/data` in development) in the usual CAP CSV format.
+For SAP BTP, the csv files must be copied into the build output – see [Initial data (CSV) on BTP](#initial-data-csv-on-btp).
 
 ## Using MongoDB in custom code
 
@@ -466,6 +540,8 @@ Errors have an HTTP `status`, a `code` and a message with a hint. The original d
 | the app still uses SQLite | `cds.requires["anubhav-mongo"]` missing or `primary: false`; look for the `[mongo] - connected to` log line |
 | `cds env requires.db` shows sqlite | expected – the plugin switches `cds.db` when plugins are loaded (`cds watch`, `cds serve`, `cds deploy`) |
 | CSV data not loaded | startup deployment only fills **empty** collections – use `cds deploy` to reload everything |
+| Collections or data not visible in Atlas after deploying to BTP | you are looking at the wrong database – the destination property `mongo.database` overrides `dbName`; the database is in the log line `connected to ... (database: ...)` |
+| CSV data not loaded on BTP, although the collections were created | `cds build` doesn't copy `db/data` to `gen/srv` – add the copy command to `mta.yaml`, see [Initial data (CSV) on BTP](#initial-data-csv-on-btp) |
 
 ## Sample application
 
