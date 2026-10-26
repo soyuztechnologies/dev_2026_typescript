@@ -109,9 +109,12 @@ puts the results into a JSON model for the charts' `FlattenedDataset`. `sap.viz`
    Proxy `Internet`, `BasicAuthentication` with the Atlas user, optional property `mongo.database` only if the cloud should use a different database than `dbName`) –
    details in the [package documentation, Step 5](https://www.npmjs.com/package/@anubhav-cap-js/mongo#step-5--create-a-btp-destination-for-mongodb).
 2. Allow the egress IPs of your BTP region in Atlas *Network Access*.
-3. Build and deploy:
+3. Build and deploy. Make sure the app uses a plugin version newer than 1.0.3 – up to 1.0.3 the app crashes on
+   startup with `token request failed with HTTP 401` when reading the destination
+   ([Troubleshooting](https://www.npmjs.com/package/@anubhav-cap-js/mongo#troubleshooting)):
 
    ```sh
+   npm add @anubhav-cap-js/mongo@latest
    npm install -g mbt
    mbt build
    cf deploy mta_archives/mongo-bookshop_1.0.0.mtar

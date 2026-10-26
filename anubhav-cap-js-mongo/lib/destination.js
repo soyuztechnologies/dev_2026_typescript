@@ -92,7 +92,8 @@ async function _fromDestinationService(name, binding) {
       method: 'POST',
       headers: {
         'content-type': 'application/x-www-form-urlencoded',
-        authorization: 'Basic ' + Buffer.from(`${encodeURIComponent(clientid)}:${encodeURIComponent(clientsecret)}`).toString('base64')
+        // not URL-encoded: XSUAA only decodes with header X-CF-ENCODED-CREDENTIALS, and client ids contain '|' and '!'
+        authorization: 'Basic ' + Buffer.from(`${clientid}:${clientsecret}`).toString('base64')
       },
       body: new URLSearchParams({ grant_type: 'client_credentials', client_id: clientid }).toString()
     })

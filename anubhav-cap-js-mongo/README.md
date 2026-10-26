@@ -236,6 +236,12 @@ add this command after `cds build --production` in the `before-all` build parame
 Then build and deploy with `mbt build` and `cf deploy`. In the cloud the log shows
 `connected to ... via destination "MONGO_ATLAS"`.
 
+> **Use a plugin version newer than 1.0.3.** Up to 1.0.3, the app crashes on startup on BTP with
+> `cannot fetch an access token for the destination service (token request failed with HTTP 401)` when
+> `@sap-cloud-sdk/connectivity` isn't installed, because the destination service credentials were URL-encoded.
+> Run `npm add @anubhav-cap-js/mongo@latest` before `mbt build`. With `@sap-cloud-sdk/connectivity` in the app,
+> every version works.
+
 **Hybrid testing** (local app, BTP destination): `cds bind destinations --to bookshop-destination` and
 `cds watch --profile hybrid` – or simulate the destination with an environment variable:
 
@@ -289,7 +295,9 @@ Entity annotations:
 
 Destinations are read with the [SAP Cloud SDK](https://www.npmjs.com/package/@sap-cloud-sdk/connectivity) if it is
 installed in your application (recommended for X.509-based destination service bindings), otherwise with the
-Destination service REST API.
+Destination service REST API. The REST API needs a binding with `clientid` and `clientsecret`; the plugin sends them
+unencoded in the Basic authorization header, as XSUAA expects (version 1.0.3 and earlier URL-encoded them, which
+fails with HTTP 401 – see [Troubleshooting](#troubleshooting)).
 
 ## Features
 
@@ -453,6 +461,8 @@ Errors have an HTTP `status`, a `code` and a message with a hint. The original d
 | `MONGO_CONNECTION_FAILED` only on BTP | add the BTP egress IPs to Atlas *Network Access* |
 | `MONGO_AUTHENTICATION_FAILED` | check user and password in Atlas *Database Access*; `authSource` for self-hosted servers |
 | `MONGO_DESTINATION_FAILED ... no destination service instance is bound` | bind a destination service (`mta.yaml`, `cf bind-service`) |
+| `MONGO_DESTINATION_FAILED ... cannot fetch an access token for the destination service (token request failed with HTTP 401)` on BTP, although destination and binding are correct | bug in version 1.0.3 and earlier: the client id/secret of the binding were URL-encoded (`\|` → `%7C`), which XSUAA rejects. Update the plugin (`npm add @anubhav-cap-js/mongo@latest`) and redeploy – or add `@sap-cloud-sdk/connectivity` to the app, which reads the destination instead |
+| `MONGO_DESTINATION_FAILED ... does not contain clientid/clientsecret` | the destination service binding is X.509 (certificate) based – add `@sap-cloud-sdk/connectivity` to the app |
 | the app still uses SQLite | `cds.requires["anubhav-mongo"]` missing or `primary: false`; look for the `[mongo] - connected to` log line |
 | `cds env requires.db` shows sqlite | expected – the plugin switches `cds.db` when plugins are loaded (`cds watch`, `cds serve`, `cds deploy`) |
 | CSV data not loaded | startup deployment only fills **empty** collections – use `cds deploy` to reload everything |

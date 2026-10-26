@@ -160,10 +160,16 @@ describe('connection from SAP BTP destination', () => {
   test('reads the destination from the bound Destination service (REST, without Cloud SDK)', async () => {
     const http = require('node:http')
     const calls = []
+    const clientid = 'sb-clone123!b725136|destination-xsappname!b62', clientsecret = 'a1b2$c3d4=e5:f6'
     const server = http.createServer((req, res) => {
       calls.push(`${req.method} ${req.url} ${req.headers.authorization?.split(' ')[0]}`)
       res.setHeader('content-type', 'application/json')
-      if (req.url === '/oauth/token') return res.end(JSON.stringify({ access_token: 'T0KEN' }))
+      if (req.url === '/oauth/token') {
+        // XSUAA expects the raw client id/secret in the Basic header (no URL encoding)
+        const basic = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString()
+        if (basic !== `${clientid}:${clientsecret}`) return (res.statusCode = 401), res.end('{}')
+        return res.end(JSON.stringify({ access_token: 'T0KEN' }))
+      }
       if (req.url === '/destination-configuration/v1/destinations/MONGO' && req.headers.authorization === 'Bearer T0KEN')
         return res.end(
           JSON.stringify({
@@ -175,7 +181,7 @@ describe('connection from SAP BTP destination', () => {
     })
     await new Promise(r => server.listen(0, r))
     const base = `http://localhost:${server.address().port}`
-    process.env.VCAP_SERVICES = JSON.stringify({ destination: [{ label: 'destination', credentials: { clientid: 'c', clientsecret: 's', url: base, uri: base } }] })
+    process.env.VCAP_SERVICES = JSON.stringify({ destination: [{ label: 'destination', credentials: { clientid, clientsecret, url: base, uri: base } }] })
     try {
       const c = await resolveConnection({ destination: 'MONGO' })
       assert.equal(c.url, 'mongodb+srv://cluster9.xyz.mongodb.net')

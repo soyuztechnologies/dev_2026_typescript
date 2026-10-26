@@ -12,6 +12,10 @@ This project follows [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- Reading a destination from the bound Destination service (without `@sap-cloud-sdk/connectivity`) failed on SAP BTP
+  with `token request failed with HTTP 401`: the client id and secret were URL-encoded in the Basic authorization
+  header (e.g. `|` became `%7C`), which XSUAA doesn't decode.
+
 - Path expressions declared in a projection that is itself projected again, e.g. `ListOfBooks as projection on Books`
   with `Books { *, author.name as author }`, failed with `join element "author_ID" is not a stored field`.
 

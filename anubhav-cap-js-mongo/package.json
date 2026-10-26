@@ -1,6 +1,6 @@
 {
   "name": "@anubhav-cap-js/mongo",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "CDS database service for MongoDB and MongoDB Atlas - use MongoDB as the persistence of SAP CAP (Node.js) applications, with hardcoded credentials or SAP BTP destinations.",
   "homepage": "https://www.anubhavtrainings.com",
   "repository": {
