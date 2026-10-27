@@ -1,0 +1,17 @@
+{
+  "name": "attachments-test",
+  "private": true,
+  "description": "Test application for @anubhav-cap-js/attachments",
+  "dependencies": {
+    "@anubhav-cap-js/attachments": "*",
+    "@anubhav-cap-js/mongo": "*"
+  },
+  "cds": {
+    "requires": {
+      "anubhav-mongo": {
+        "dbName": "attachments_test"
+      },
+      "auth": "dummy"
+    }
+  }
+}

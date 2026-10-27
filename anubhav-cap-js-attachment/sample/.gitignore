@@ -1,0 +1,9 @@
+node_modules/
+gen/
+mta_archives/
+*.mtar
+
+# local credentials - never commit
+.cdsrc-private.json
+default-env.json
+.env

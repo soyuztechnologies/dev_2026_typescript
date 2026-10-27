@@ -1,0 +1,67 @@
+### Sample requests for the helpdesk sample (VS Code REST Client) - run `npm run watch` first
+@server = http://localhost:4004
+@auth = Basic alice:
+
+### Incidents
+GET {{server}}/odata/v4/helpdesk/Incidents?$expand=attachments($select=ID,filename,mimeType,size)
+Authorization: {{auth}}
+
+### 1. Create a draft
+# @name incident
+POST {{server}}/odata/v4/helpdesk/Incidents
+Authorization: {{auth}}
+Content-Type: application/json
+
+{ "title": "Upload test" }
+
+### 2. Create the attachment (metadata) - the media type is derived from the file name
+# @name attachment
+POST {{server}}/odata/v4/helpdesk/Incidents(ID={{incident.response.body.ID}},IsActiveEntity=false)/attachments
+Authorization: {{auth}}
+Content-Type: application/json
+
+{ "filename": "hello.txt" }
+
+### 3. Upload the content (stored in MongoDB GridFS)
+PUT {{server}}/odata/v4/helpdesk/Incidents(ID={{incident.response.body.ID}},IsActiveEntity=false)/attachments(ID={{attachment.response.body.ID}},IsActiveEntity=false)/content
+Authorization: {{auth}}
+Content-Type: text/plain
+
+Hello from MongoDB GridFS!
+
+### 3b. Single attachment (Composition of one): exists with the incident - just upload (replace = upload again)
+PUT {{server}}/odata/v4/helpdesk/Incidents(ID={{incident.response.body.ID}},IsActiveEntity=false)/approval/content
+Authorization: {{auth}}
+Content-Type: application/pdf
+Content-Disposition: attachment; filename="approval.pdf"
+
+%PDF-1.4 signed approval
+
+### 3c. Remove the file of the single attachment
+# DELETE {{server}}/odata/v4/helpdesk/Incidents(ID={{incident.response.body.ID}},IsActiveEntity=false)/approval/content
+# Authorization: {{auth}}
+
+### 4. Activate the draft
+POST {{server}}/odata/v4/helpdesk/Incidents(ID={{incident.response.body.ID}},IsActiveEntity=false)/HelpdeskService.draftActivate
+Authorization: {{auth}}
+Content-Type: application/json
+
+{}
+
+### 5. Download / view the content
+GET {{server}}/odata/v4/helpdesk/Incidents(ID={{incident.response.body.ID}},IsActiveEntity=true)/attachments(ID={{attachment.response.body.ID}},IsActiveEntity=true)/content
+Authorization: {{auth}}
+
+### 6. Not allowed: screenshots only accept images
+POST {{server}}/odata/v4/helpdesk/Incidents(ID={{incident.response.body.ID}},IsActiveEntity=true)/HelpdeskService.draftEdit
+Authorization: {{auth}}
+Content-Type: application/json
+
+{ "PreserveChanges": true }
+
+###
+POST {{server}}/odata/v4/helpdesk/Incidents(ID={{incident.response.body.ID}},IsActiveEntity=false)/screenshots
+Authorization: {{auth}}
+Content-Type: application/json
+
+{ "filename": "report.pdf" }

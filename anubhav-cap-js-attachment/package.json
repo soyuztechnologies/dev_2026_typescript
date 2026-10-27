@@ -1,0 +1,72 @@
+{
+  "name": "@anubhav-cap-js/attachments",
+  "version": "1.0.0",
+  "description": "Attachments for SAP CAP (Node.js) on MongoDB - upload, download and preview files of any kind in Fiori Elements, stored in MongoDB GridFS via @anubhav-cap-js/mongo. No object store needed.",
+  "homepage": "https://www.anubhavtrainings.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anubhavtrainings-official/-anubhav-cap-js-mongodb.git",
+    "directory": "anubhav-cap-js-attachment"
+  },
+  "keywords": [
+    "CAP",
+    "CDS",
+    "SAP",
+    "BTP",
+    "MongoDB",
+    "GridFS",
+    "attachments",
+    "Fiori",
+    "cds-plugin",
+    "anubhav trainings"
+  ],
+  "author": "Anubhav Trainings (https://www.anubhavtrainings.com)",
+  "license": "Apache-2.0",
+  "main": "cds-plugin.js",
+  "files": [
+    "cds-plugin.js",
+    "index.cds",
+    "db",
+    "lib",
+    "_i18n",
+    "ui5",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 --test-timeout=600000 \"test/*.test.mjs\"",
+    "prepublishOnly": "npm test",
+    "link:sample": "node -e \"const fs=require('fs'),p=require('path'),l='sample/node_modules/@anubhav-cap-js/attachments';fs.mkdirSync(p.dirname(l),{recursive:true});try{fs.unlinkSync(l)}catch{}fs.symlinkSync(process.cwd(),l,'junction');console.log('linked',l)\""
+  },
+  "peerDependencies": {
+    "@anubhav-cap-js/mongo": "^1.0.5",
+    "@sap/cds": "^10"
+  },
+  "devDependencies": {
+    "@anubhav-cap-js/mongo": "^1.0.5",
+    "@cap-js/cds-test": "^1.0.2",
+    "@sap/cds": "^10",
+    "express": "^4 || ^5",
+    "mongodb-memory-server": "^10"
+  },
+  "cds": {
+    "requires": {
+      "anubhav-attachments": {
+        "maxFileSize": "100MB",
+        "allowedMimeTypes": [
+          "*/*"
+        ],
+        "maxCount": 0,
+        "inline": true,
+        "bucketName": "attachments"
+      }
+    }
+  }
+}

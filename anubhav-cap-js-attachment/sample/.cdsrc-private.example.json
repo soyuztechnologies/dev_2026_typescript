@@ -1,0 +1,13 @@
+{
+  "requires": {
+    "anubhav-mongo": {
+      "[development]": {
+        "url": "mongodb+srv://cluster0.xxxxx.mongodb.net",
+        "credentials": {
+          "user": "your-db-user",
+          "password": "your-db-password"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+<!-- Fiori Elements custom column: preview button (magnifier) in each row of an attachments table -->
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+  <Button
+    core:require="{ Preview: 'anubhav/attachments/Preview' }"
+    icon="sap-icon://zoom-in"
+    type="Transparent"
+    tooltip="Preview"
+    visible="{ path: 'size', formatter: 'Preview.hasFile' }"
+    press="Preview.open"
+  />
+</core:FragmentDefinition>

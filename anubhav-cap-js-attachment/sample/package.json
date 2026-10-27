@@ -1,0 +1,45 @@
+{
+  "name": "attachments-helpdesk-sample",
+  "version": "1.0.0",
+  "description": "Sample SAP CAP application with Fiori Elements and file attachments in MongoDB (GridFS) via @anubhav-cap-js/attachments - by www.anubhavtrainings.com",
+  "private": true,
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@anubhav-cap-js/attachments": "^1.0.0",
+    "@anubhav-cap-js/mongo": "^1.0.5",
+    "@sap/cds": "^10",
+    "express": "^4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch": "cds watch --open incidents/webapp/index.html?sap-ui-xx-viewCache=false",
+    "ping": "anubhav-mongo ping"
+  },
+  "cds": {
+    "requires": {
+      "anubhav-mongo": {
+        "dbName": "anubhav_helpdesk",
+        "autoDeploy": true
+      },
+      "anubhav-attachments": {
+        "maxFileSize": "25MB",
+        "maxCount": 10
+      },
+      "[development]": {
+        "auth": {
+          "kind": "mocked",
+          "users": {
+            "alice": {
+              "roles": [
+                "support"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
