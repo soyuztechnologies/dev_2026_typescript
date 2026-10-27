@@ -5,6 +5,11 @@ This project follows [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
+### Changed
+
+- npm keywords: added distinctive keywords (e.g. `anubhav`, `anubhav-cap-js`, `cap-mongodb`, `mongodb-atlas`) so the
+  package can be found with `npm search` and `keywords:` searches on npmjs.com.
+
 ### Added
 
 - Option `replaceMode` (default `false`): the deployment on boot drops and re-creates all collections of the model

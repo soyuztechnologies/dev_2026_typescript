@@ -3,6 +3,13 @@
 All notable changes to this project are documented in this file.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-10-27
+
+### Changed
+
+- npm keywords: added distinctive keywords (e.g. `anubhav`, `anubhav-cap-js`, `cap-mongodb`, `cap-attachments`) so
+  the package can be found with `npm search` and `keywords:` searches on npmjs.com.
+
 ## [1.0.0] - 2026-10-27
 
 ### Added

@@ -1,6 +1,6 @@
 {
   "name": "@anubhav-cap-js/attachments",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Attachments for SAP CAP (Node.js) on MongoDB - upload, download and preview files of any kind in Fiori Elements, stored in MongoDB GridFS via @anubhav-cap-js/mongo. No object store needed.",
   "homepage": "https://www.anubhavtrainings.com",
   "repository": {
@@ -13,12 +13,20 @@
     "CDS",
     "SAP",
     "BTP",
-    "MongoDB",
     "GridFS",
     "attachments",
     "Fiori",
     "cds-plugin",
-    "anubhav trainings"
+    "mongodb",
+    "sap-cap",
+    "cap-attachments",
+    "fiori-elements",
+    "file-upload",
+    "cap-mongodb",
+    "anubhav",
+    "anubhav-trainings",
+    "anubhav-oberoy",
+    "anubhav-cap-js"
   ],
   "author": "Anubhav Trainings (https://www.anubhavtrainings.com)",
   "license": "Apache-2.0",
